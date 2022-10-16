@@ -1,0 +1,40 @@
+{
+    "Teams": {
+        "Contra Clan": {
+            "note": "CC",
+            "embed_id": 1030882242328805477,
+            "Pytho": {
+                "ID": "915795740",
+                "note": "kann auch fliegen."
+            },
+            "Napo_II": {
+                "ID": "63483374",
+                "note": "Helipilot"
+            }
+        },
+        "[NOC]": {
+            "note": "Was auch immer das hei\u00dfen soll.",
+            "embed_id": 1030882252487401574,
+            "[NOC]Gartengott": {
+                "ID": "930732640",
+                "note": "Luca"
+            },
+            "[NOC] Tedzu": {
+                "ID": "827141976",
+                "note": "https://www.twitch.tv/t3dzu"
+            }
+        },
+        "Team Marc / Michi": {
+            "note": "Nice duds",
+            "embed_id": 1030882260536279151,
+            "[NOC] MoinMeister": {
+                "ID": "1005373972",
+                "note": "Michi"
+            },
+            "Slothuu": {
+                "ID": "955281643",
+                "note": "Marc"
+            }
+        }
+    }
+}
