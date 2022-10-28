@@ -27,13 +27,45 @@
         "Team Marc / Michi": {
             "note": "Nice duds",
             "embed_id": 1030882260536279151,
-            "[NOC] MoinMeister": {
-                "ID": "1005373972",
-                "note": "Michi"
-            },
             "Slothuu": {
                 "ID": "955281643",
                 "note": "Marc"
+            },
+            "LyNx": {
+                "ID": "1005373972",
+                "note": "Michi"
+            }
+        },
+        "[PIXL]": {
+            "note": "N4 | 2x2 mit Pilz ",
+            "embed_id": "1034089717454610442",
+            "[PIXL] luzzz": {
+                "ID": "1002783117",
+                "note": "Jung , Nett"
+            },
+            "benekioo": {
+                "ID": "1010341253",
+                "note": "Etwas dappig!"
+            }
+        },
+        "Large Oil Heli Counter": {
+            "note": "D4 | Laden zu 70% auf dem Wasserturm",
+            "embed_id": "1034561902136799242",
+            "Rain": {
+                "ID": "1012573953",
+                "note": "GER"
+            },
+            "oSkyneto": {
+                "ID": "141068139",
+                "note": "Nicht 100% im Team"
+            }
+        },
+        "Solo": {
+            "note": "Smal / Cargo counter",
+            "embed_id": "1034906243078303764",
+            "Realzx": {
+                "ID": "92117457",
+                "note": "HVP/Granad lauchner"
             }
         }
     }

@@ -470,9 +470,9 @@ class Player_watch_loops(commands.Cog, commands.Bot):
                     
 
                     value = f" {Online_ico}  {lastSeen} \n ServerZeit: `{timePlayed}h` \n note: `{Player_note}` \n Player ID: [{Player_id}]({Player_Bat_url})"
-
-                    if name_cange[0] == True:
-                        embed.add_field(name=f"Oldname: {Player} Newname: {name_cange[1]}", value=  value  , inline=True)
+    
+                    if str(name_cange[0]) == str(True):
+                        embed.add_field(name=f"Oldname: {Player}\n🆕: {name_cange[1]}", value=  value  , inline=True)
                     else:
                         embed.add_field(name=f"{Player}", value= value , inline=True)
             

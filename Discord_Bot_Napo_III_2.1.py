@@ -101,6 +101,7 @@ Admin_Channel_ID = int(read_config(config_dir, "Channel", "Admin_Channel_ID"))
 Admin_Channel_name = read_config(config_dir, "Channel", "Admin_Channel_name")
 Rust_Bot_Channel_ID = int(read_config(config_dir, "Channel", "Rust_Bot_Channel_ID"))
 Rust_Bot_Channel_name =  read_config(config_dir, "Channel", "Rust_Bot_Channel_name")
+rust_info_name =  read_config(config_dir, "Channel", "rust_info_name")
 delt_messages_Channel_ID = int(read_config(config_dir, "Channel", "delt_messages_Channel_ID"))
 
 
@@ -109,8 +110,6 @@ battlemetrics_Server_ID = read_config(config_dir, "Rust", "battlemetrics_Server_
 battlemetrics_api_server = "https://api.battlemetrics.com/servers/"+str(battlemetrics_Server_ID)
 Rust_Server_description_message_id = int(read_config(config_dir, "Rust", "Rust_Server_description_message_id"))
 Rust_Server_embed_message_id = int(read_config(config_dir, "Rust", "Rust_Server_embed_message_id"))
-battlemetrics_player_list = read_config(config_dir, "Rust", "battlemetrics_player_list")
-
 
 ################################################################################################################################
 # Main Programm
@@ -132,7 +131,6 @@ class MyBot(commands.Bot):
             "help_command",
             
         ]
-        #"Work_Folder.Rust.cargo_timer"
     
     async def setup_hook(self):
         for ext in self.initial_extensions:
@@ -174,8 +172,8 @@ class MyBot(commands.Bot):
         async def on_message(message):  # this event is called when a message is sent by anyone
             # if the user is the client user itself, ignore the message
             await bot.process_commands(message)
-            if message.content == praefix:
-                return
+            #if message.content == praefix:
+            #    return
             
             if message.author == bot.user:
                 return
@@ -197,6 +195,40 @@ class MyBot(commands.Bot):
 
             log(str(user) + ": (#"+ str(channel_m)+") say: " + content_m)
 
+            print(f"channel_m= {channel_m} == Rust_Bot_Channel_name= {Rust_Bot_Channel_name}")  
+
+            if str(channel_m) == str(Rust_Bot_Channel_name):
+                
+                await message.delete()
+                log(f"Nachricht wurde vom Bot gelöscht:{channel_m} {message}")
+
+            if str(channel_m) == str(rust_info_name):
+                
+                await message.delete()
+                log(f"Nachricht wurde vom Bot gelöscht:{channel_m} {message}")
+
+
+        @bot.event
+        async def on_message_delete(message):
+
+            message_author = str(message.author)
+            message_channel = "#"+ str(message.channel)
+            message_content = str(message.content)
+
+            log("Nachricht wurde gelöscht von "+str(message_author)+" im Channel: "+str(message_channel)+"\n Nachricht: "+str(message_content))
+
+            if message.author == bot.user:
+                return
+
+            Date_Time=(time.strftime("%d_%m-%Y %H:%M"))
+
+            embed=discord.Embed(title="Gelöschte Nachricht", description=("am "+str(Date_Time)), color=0xff0000)
+            embed.set_thumbnail(url="https://i.imgur.com/PdLm65I.png")
+
+            embed.add_field(name=message_author, value="Channel: "+message_channel, inline=True)
+            embed.set_footer(text= message_content)
+            Adelt_messages_name_discord = bot.get_channel(delt_messages_Channel_ID)
+            await Adelt_messages_name_discord.send(embed=embed)
 
 
 

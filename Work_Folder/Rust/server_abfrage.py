@@ -42,10 +42,17 @@ class loops(commands.Cog, commands.Bot):
         maxPlayers = response_json["data"]["attributes"]["maxPlayers"]
         players = response_json["data"]["attributes"]["players"]
         rust_description = response_json["data"]["attributes"]["details"]["rust_description"]
-        rust_description = f"Server URL: {server_url}\n{rust_description}"
+
+        start_pos =(server_url.find("://"))+3
+        http_str = server_url[start_pos:]
+        if http_str in rust_description:
+            rust_description = rust_description
+        else:
+            rust_description = f"Server URL: {server_url}\n{rust_description}"
+        
         time_stemp = time.time()
         Discord_time_stemp = discord_time_convert(int(time_stemp))
-        Server_ip_text = f"```client.connect {server_ip}:{server_port}```\n battlemetricsID: `{server_id}`\naktualisiert {Discord_time_stemp}"
+        Server_ip_text = f"```client.connect {server_ip}:{server_port}```\nsteam://connect/{server_ip}:{server_port}\n battlemetricsID: `{server_id}`\naktualisiert {Discord_time_stemp}"
         activity_text = f"Online: {players}/{maxPlayers}"
         await self.bot.change_presence(activity=discord.Game(activity_text))
         log(f"Discord: change Bot Status[{activity_text}]")

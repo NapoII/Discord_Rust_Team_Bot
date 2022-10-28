@@ -373,7 +373,7 @@ def Player_name_cange(JSOn_data, Team_Name, Player):
             if Player == New_name:
                 return False, New_name
             else:
-                return True
+                return True, New_name
 
 def Player_Server_info(Player_id, servers_id):
 
