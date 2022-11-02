@@ -66,6 +66,11 @@ class New_player(commands.Cog):
         except:
 
             Player_server_data = Player_Server_info(player_id, battlemetrics_Server_ID)
+            if Player_server_data == "Rate Limit Exceeded":
+                while True:
+                    Player_server_data = Player_Server_info(player_id, battlemetrics_Server_ID)
+                    if Player_server_data != "Rate Limit Exceeded":
+                        break
             if Player_server_data == "400":
                 player_online_status = "never_played"
 
@@ -176,10 +181,10 @@ class modal_New_team( ui.Modal, title="New Team",):
 
             embed=discord.Embed(title=self.New_Team_name, description=self.New_team_note, color=0xc0c0c0)
             #Rust_Bot_Channel_ID = int(read_config(config_dir, "Channel", "Rust_Bot_Channel_ID"))
-            Channel = interaction.client.get_channel(Rust_Bot_Channel_ID)
-            Team_Card_embed = await Channel.send(embed=embed)
-            Team_Card_embed_id = (Team_Card_embed.id)
-
+            #Channel = interaction.client.get_channel(Rust_Bot_Channel_ID)
+            #Team_Card_embed = await Channel.send(embed=embed, view=Sub_button())
+            #Team_Card_embed_id = (Team_Card_embed.id)
+            Team_Card_embed_id = 0
             log(f'Confirmed... self.confirm_Button = {self.confirm_Button}')
             #return self.confirm_Button, self.say_channel_id, self.say_title, self.say_text
 
@@ -197,8 +202,6 @@ class modal_New_team( ui.Modal, title="New Team",):
 
 
             Fill_JSOn_File(file_path_Team_data,JSOn_data)
-
-            print(JSOn_data)
 
         else:
             self.confirm_Button = False
@@ -272,7 +275,6 @@ class Delt_player(commands.Cog):
 
             Team_name_from_player = Team_name_from_Player(dict, name)
             note = dict["Teams"][Team_name_from_player][name]["note"]
-            print(f"Full_player_list_len  = {Full_player_list_len}\n x = {x}\nname={name}")
             options.append(discord.SelectOption(label=f"{name}", description=f"{Team_name_from_player}"))
         select  = Select(options = options)
 
@@ -409,17 +411,19 @@ class Player_watch_loops(commands.Cog, commands.Bot):
     def __init__ (self, bot:commands.Bot):
 
         self.bot = bot
-        
         self.myLoop.start(bot)
-    @tasks.loop(seconds = 30) # repeat after every 10 seconds
+
+    Time_wait = 60
+    @tasks.loop(seconds = Time_wait) # repeat after every 10 seconds
     
-    async def myLoop(self,bot):
+    
+    async def myLoop(self,bot,):
         await self.bot.wait_until_ready()
         battlemetrics_Server_ID = (read_config(config_dir, "Rust", "battlemetrics_Server_ID"))
         JSOn_data = open_JSOn_File(file_path_Team_data)
         Team_list = list(JSOn_data["Teams"].keys())
         Team_list_len = len(Team_list)
-
+        log(f"Loop Start")
         x = -1
         while True:
     
@@ -430,16 +434,48 @@ class Player_watch_loops(commands.Cog, commands.Bot):
             Team_Name = Team_list[x]
             Team_note = JSOn_data["Teams"][f"{Team_list[x]}"]["note"]
             Team_embed_id = JSOn_data["Teams"][f"{Team_list[x]}"]["embed_id"]
+            Last_Status = JSOn_data["Teams"][f"{Team_list[x]}"]["Last_Status"]
+
             Never_played = False
+
             online = Team_online_status(JSOn_data, Team_Name, battlemetrics_Server_ID)
+
+
+
+            if online == "Rate Limit Exceeded":
+                print_x = -1
+                while True:
+                    print_x = print_x + 1
+                    online = Team_online_status(JSOn_data, Team_Name, battlemetrics_Server_ID)
+                    if online != "Rate Limit Exceeded":
+                        print (f"print_x:{print_x} Team_online_status = Rate Limit Exceeded")
+                        break
+
             time_stemp = time.time()
             Discord_time_stemp = discord_time_convert(int(time_stemp))
-            description =f"Team note: {Team_note} \n aktualisiert {Discord_time_stemp}"
+            description =f"Team note: `{Team_note}` \n aktualisiert {Discord_time_stemp}"
+            Sub_alert = False
+
             if online == True:
                 embed=discord.Embed(title=Team_Name, description=description , color=0x808040)
+                if Last_Status == False:
+                    Sub_alert = True
+
+                JSOn_data["Teams"][f"{Team_list[x]}"]["Last_Status"] = True
+                Fill_JSOn_File(file_path_Team_data, JSOn_data)
+
+
             else:
+
                 embed=discord.Embed(title=Team_Name, description=description , color=0xff0000)
-            
+                if Last_Status == True:
+                    Sub_alert = True
+
+
+                JSOn_data["Teams"][f"{Team_list[x]}"]["Last_Status"]= False
+                Fill_JSOn_File(file_path_Team_data, JSOn_data)
+                    
+
             Player_list = get_all_Player_from_a_Team(JSOn_data, Team_Name)
             Player_list_len = len(Player_list)
             y = -1
@@ -456,6 +492,9 @@ class Player_watch_loops(commands.Cog, commands.Bot):
                 Player_Bat_url = f"https://www.battlemetrics.com/players/{Player_id}"
 
                 Player_server_data = Player_Server_info(Player_id, battlemetrics_Server_ID)
+                if Player_server_data == "Rate Limit Exceeded":
+                    x = x -1
+                    break
                 if Player_server_data == "400":
                     Never_played = True
                     value = f"❌ `Never played on that Server` ❌ \n note: `{Player_note}` \n Player ID: [{Player_id}]({Player_Bat_url})"
@@ -476,6 +515,28 @@ class Player_watch_loops(commands.Cog, commands.Bot):
                     else:
                         embed.add_field(name=f"{Player}", value= value , inline=True)
             
+            if Sub_alert == True:
+
+                Sub_Discord_ID_list = list(JSOn_data["Teams"][f"{Team_list[x]}"]["Sub_Discord_ID_list"])
+                Sub_Discord_ID_list_len = len(Sub_Discord_ID_list)
+                if Sub_Discord_ID_list_len == 0:
+                    pass
+                else:
+                    z = -1
+                    while True:
+                        z = z + 1
+                        if z == Sub_Discord_ID_list_len:
+                            break
+                        Player_ID = Sub_Discord_ID_list[z]
+                        User = await self.bot.fetch_user(int(Player_ID))
+                        if online == True:
+                            embed_New_Status=discord.Embed(title="🟢 New Online Status 🟢", description=f"Team `{Team_Name}` ist jetzt Online! <#{Rust_Bot_Channel_ID}>", color=0xff8000)
+                            await User.send(embed=embed_New_Status)
+                            await User.send(embed=embed)
+                        else:
+                            embed_New_Status=discord.Embed(title="🔴 New Online Status 🔴", description=f"Team `{Team_Name}` ist jetzt Offline! <#{Rust_Bot_Channel_ID}>", color=0xff0000)
+                            await User.send(embed=embed_New_Status)
+                            await User.send(embed=embed)
             try:
                 Rust_Bot_Channel= self.bot.get_channel(Rust_Bot_Channel_ID)
                 msg = await Rust_Bot_Channel.fetch_message(Team_embed_id)
@@ -485,7 +546,7 @@ class Player_watch_loops(commands.Cog, commands.Bot):
                 try:
                     JSOn_data = open_JSOn_File(file_path_Team_data)
                     Rust_Bot_Channel= self.bot.get_channel(Rust_Bot_Channel_ID)
-                    Team_Card_embed = await Rust_Bot_Channel.send(embed=embed)
+                    Team_Card_embed = await Rust_Bot_Channel.send(embed=embed, view=Sub_button())
                     Team_Card_embed_id = (Team_Card_embed.id)
                     JSOn_data["Teams"][Team_Name]["embed_id"] = Team_Card_embed_id
                     Fill_JSOn_File(file_path_Team_data, JSOn_data)
@@ -494,13 +555,100 @@ class Player_watch_loops(commands.Cog, commands.Bot):
                     pass
 
 
+class Sub_button(discord.ui.View,):
+    def __init__(self) -> None:
+        super().__init__(timeout=None)
+    
+    @discord.ui.button(label = "🔔", style= discord.ButtonStyle.green, custom_id = "Sub")
+    async def New_Sub(self, interaction: discord.Interaction, Button: discord.ui.Button):
+
+        User = interaction.user
+        User_ID = interaction.user.id
+
+        embed_ID = interaction.message.id
+        JSOn_data = open_JSOn_File(file_path_Team_data)
+        Team_data = from_embed_ID_to_data(JSOn_data, embed_ID)
+        Team_name = Team_data[0]
+        Sub_Discord_ID_list = list(Team_data[1])
+        Sub_Discord_ID_list.append
+
+        Team_data = from_embed_ID_to_data(JSOn_data, embed_ID)
+        Team_name = Team_data[0]
+        Sub_Discord_ID_list = list(Team_data[1])
+
+        #json_object = json.dumps(JSOn_data, indent = 4)
+
+        if User_ID in Sub_Discord_ID_list:
+            await interaction.response.send_message(f"Du Abonierst schon {Team_name}", ephemeral=True)
+        else:
+            Sub_Discord_ID_list.append(User_ID)
+            JSOn_data["Teams"][f"{Team_name}"]["Sub_Discord_ID_list"] = Sub_Discord_ID_list
+            Fill_JSOn_File(file_path_Team_data, JSOn_data)
+
+            text = f"Ich werde dich hier über Direct Message informiren wenn der Online Status von {Team_name} sich geändert hat."
+            embed=discord.Embed(title=f"🔔 Du Abonierst nun das Team: {Team_name} 🔔", description=text, color=0xff8040)
+            await User.send(embed=embed)
+
+            text = f"Ich werde dich über Direct Message informiren wenn der Online Status von {Team_name} sich geändert hat."
+            embed=discord.Embed(title=f"🔔 Du Abonierst nun das Team: {Team_name} 🔔", description=text, color=0xff8040)
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+
+
+
+    @discord.ui.button(label = "🔕", style= discord.ButtonStyle.grey, custom_id = "UnSub")
+    async def deltSub(self, interaction: discord.Interaction, Button: discord.ui.Button):
+            User = interaction.user
+            User_ID = interaction.user.id
+
+            embed_ID = interaction.message.id
+            JSOn_data = open_JSOn_File(file_path_Team_data)
+            Team_data = from_embed_ID_to_data(JSOn_data, embed_ID)
+            Team_name = Team_data[0]
+            Sub_Discord_ID_list = list(Team_data[1])
+            if User_ID in Sub_Discord_ID_list:
+                Sub_Discord_ID_list.remove(User_ID)
+                JSOn_data["Teams"][f"{Team_name}"]["Sub_Discord_ID_list"] = Sub_Discord_ID_list
+                Fill_JSOn_File(file_path_Team_data, JSOn_data)
+
+                text = f"Ich werde dich hier über Direct Message nicht mehr informiren wenn der Online Status von {Team_name} sich geändert hat."
+                embed=discord.Embed(title=f"🔕 Du Deabonnierst nun das Team: {Team_name} 🔕", description=text, color=0xff0000)
+                await User.send(embed=embed)
+
+                text = f"Ich werde dich über Direct Message nicht mehr informiren wenn der Online Status von {Team_name} sich geändert hat."
+                embed=discord.Embed(title=f"🔕 Du Deabonnierst nun das Team: {Team_name} 🔕", description=text, color=0xff0000)
+                await interaction.response.send_message(embed=embed, ephemeral=True)
+            else:
+                await interaction.response.send_message(f"Du Abonierst zur Zeit das Team {Team_name} nicht.", ephemeral=True)
+
+    @discord.ui.button(label = "alle Abos Löschen", style= discord.ButtonStyle.red, custom_id = "UnSubAll")
+    async def deltAllSubs(self, interaction: discord.Interaction, Button: discord.ui.Button):
+            User = interaction.user
+            User_ID = interaction.user.id
+
+            embed_ID = interaction.message.id
+            JSOn_data = open_JSOn_File(file_path_Team_data)
+            JSOn_data = delt_all_Player_subs(JSOn_data, User_ID)
+            Fill_JSOn_File(file_path_Team_data, JSOn_data)
+
+            text = f" Du Abonierst nun kein Team mehr."
+            embed=discord.Embed(title=f"🔕", description=text, color=0xff0000)
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+
+
+
+
+
+
+
 async def setup(bot: commands.Bot):
     await bot.add_cog(New_player(bot), guild=discord.Object(guild_id))
     await bot.add_cog(clear_watchlist(bot), guild=discord.Object(guild_id))
     await bot.add_cog(Player_watch_loops(bot), guild=discord.Object(guild_id))
     await bot.add_cog(Delt_player(bot), guild=discord.Object(guild_id))
     await bot.add_cog(Delt_Team(bot), guild=discord.Object(guild_id))
+    bot.add_view(Sub_button())
 
+    
     
 
     

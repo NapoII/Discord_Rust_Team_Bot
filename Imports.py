@@ -64,6 +64,7 @@ f0I = """
 ####################################################################################################
 #import
 
+from msilib.schema import Error
 import os
 import os, sys
 import time
@@ -267,6 +268,9 @@ def add_Team(dict, team, note, embed_id):
     dict["Teams"].update ({F"{team}":{}})
     dict["Teams"][F"{team}"].update({"note":f"{note}"})
     dict["Teams"][F"{team}"].update({"embed_id":f"{embed_id}"})
+    dict["Teams"][F"{team}"].update({"Sub_Discord_ID_list":[]})
+    dict["Teams"][F"{team}"].update({"Last_Status":False})
+
     dict.update
     return dict
 
@@ -335,33 +339,44 @@ def get_all_Player_from_a_Team(JSOn_data, Team):
         Team_Player_list = list(JSOn_data["Teams"][f"{Team}"].keys())
         Team_Player_list.remove('note')
         Team_Player_list.remove('embed_id')
+        Team_Player_list.remove('Sub_Discord_ID_list')
+        Team_Player_list.remove("Last_Status")
 
     return Team_Player_list
 
 def Team_online_status(JSOn_data, Team_Name, servers_id):
-        online = False
-        Player_list = get_all_Player_from_a_Team(JSOn_data, Team_Name)
-        Player_list_len = len(Player_list)
-        x = -1
-        while True:
-            x = x + 1
+    online = False
+    Player_list = get_all_Player_from_a_Team(JSOn_data, Team_Name)
+    Player_list_len = len(Player_list)
+    x = -1
+    while True:
+        x = x + 1
 
-            if x == Player_list_len:
-                break
+        if x == Player_list_len:
+            break
 
-            Player = Player_list[x]
-            Player_id = JSOn_data["Teams"][Team_Name][Player]["ID"]
+        Player = Player_list[x]
+        Player_id = JSOn_data["Teams"][Team_Name][Player]["ID"]
 
-            Player_Server_url = f"https://api.battlemetrics.com/players/{Player_id}/servers/{servers_id}"
-            response = requests.get(Player_Server_url)
-            json_data = response.json()
+        Player_Server_url = f"https://api.battlemetrics.com/players/{Player_id}/servers/{servers_id}"
+        response = requests.get(Player_Server_url)
+        json_data = response.json()
+        
+
+        #json_object = json.dumps(json_data, indent = 2)
+        try:
+            Error_429 = json_data["errors"][0]["title"]
+            if Error_429 == "Rate Limit Exceeded":
+                log("Rate Limit Exceeded")
+                return Error_429
+        except:
             try:
                 online = json_data["data"]["attributes"]["online"]
-                if online == True:
+                if str(online) == "True":
                     return True
             except:
                 online = json_data["errors"][0]["status"]
-        return online
+
 
 def Player_name_cange(JSOn_data, Team_Name, Player):
 
@@ -380,6 +395,15 @@ def Player_Server_info(Player_id, servers_id):
             Player_Server_url = f"https://api.battlemetrics.com/players/{Player_id}/servers/{servers_id}"
             response = requests.get(Player_Server_url)
             json_data = response.json()
+            #json_object = json.dumps(json_data, indent = 2)
+            try:
+                Error_429 = json_data["errors"][0]["title"]
+                if Error_429 == "Rate Limit Exceeded":
+                    log("Rate Limit Exceeded ")
+                    return Error_429
+            except:
+                pass
+
             try:
                 online = json_data["data"]["attributes"]["online"]
 
@@ -412,6 +436,9 @@ def Get_all_player_list(dict):
         Team_sepz_player_list = list(dict["Teams"][Team_list[x]].keys())
         Team_sepz_player_list.remove("note")
         Team_sepz_player_list.remove("embed_id")
+        Team_sepz_player_list.remove("Sub_Discord_ID_list")
+        Team_sepz_player_list.remove("Last_Status")
+        
         Team_sepz_player_list_len = len(Team_sepz_player_list)
         y = -1
         while True:
@@ -453,3 +480,41 @@ def get_map_img(Server_ID):
 
     except:
         return False
+
+def from_embed_ID_to_data(JSOn_data, embed_ID):
+    
+    Team_list = list(JSOn_data["Teams"].keys())
+    Team_list_len = len(Team_list)
+
+    x = -1
+    while True:
+
+        x = x + 1
+        if x == Team_list_len:
+            break
+        
+        Team_embed_id = JSOn_data["Teams"][f"{Team_list[x]}"]["embed_id"]
+        if Team_embed_id == embed_ID:
+            Team = Team_list[x]
+            Sub_Discord_ID = JSOn_data["Teams"][f"{Team_list[x]}"]["Sub_Discord_ID_list"]
+            return Team, Sub_Discord_ID
+
+def delt_all_Player_subs(JSOn_data, Player_ID):
+    
+    Team_list = list(JSOn_data["Teams"].keys())
+    Team_list_len = len(Team_list)
+
+    x = -1
+    while True:
+
+        x = x + 1
+        if x == Team_list_len:
+            break
+        
+        Sub_Discord_ID_list = list(JSOn_data["Teams"][f"{Team_list[x]}"]["Sub_Discord_ID_list"])
+        try:
+            Sub_Discord_ID_list.remove(Player_ID)
+            JSOn_data["Teams"][f"{Team_list[x]}"]["Sub_Discord_ID_list"] = Sub_Discord_ID_list
+        except:
+            pass
+    return JSOn_data
