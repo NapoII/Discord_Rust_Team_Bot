@@ -2,7 +2,11 @@
     "Teams": {
         "Contra Clan": {
             "note": "CC",
-            "embed_id": 1030882242328805477,
+            "embed_id": 1037173885717721108,
+            "Sub_Discord_ID_list": [
+                189025602236448778
+            ],
+            "Last_Status": false,
             "Pytho": {
                 "ID": "915795740",
                 "note": "kann auch fliegen."
@@ -14,7 +18,9 @@
         },
         "[NOC]": {
             "note": "Was auch immer das hei\u00dfen soll.",
-            "embed_id": 1030882252487401574,
+            "embed_id": 1037173892961292298,
+            "Sub_Discord_ID_list": [],
+            "Last_Status": false,
             "[NOC]Gartengott": {
                 "ID": "930732640",
                 "note": "Luca"
@@ -26,7 +32,9 @@
         },
         "Team Marc / Michi": {
             "note": "Nice duds",
-            "embed_id": 1030882260536279151,
+            "embed_id": 1037173900032868373,
+            "Sub_Discord_ID_list": [],
+            "Last_Status": false,
             "Slothuu": {
                 "ID": "955281643",
                 "note": "Marc"
@@ -38,7 +46,9 @@
         },
         "[PIXL]": {
             "note": "N4 | 2x2 mit Pilz ",
-            "embed_id": "1034089717454610442",
+            "embed_id": 1037173906404032562,
+            "Sub_Discord_ID_list": [],
+            "Last_Status": true,
             "[PIXL] luzzz": {
                 "ID": "1002783117",
                 "note": "Jung , Nett"
@@ -50,7 +60,9 @@
         },
         "Large Oil Heli Counter": {
             "note": "D4 | Laden zu 70% auf dem Wasserturm",
-            "embed_id": "1034561902136799242",
+            "embed_id": 1037173914096381992,
+            "Sub_Discord_ID_list": [],
+            "Last_Status": true,
             "Rain": {
                 "ID": "1012573953",
                 "note": "GER"
@@ -62,7 +74,9 @@
         },
         "Solo": {
             "note": "Smal / Cargo counter",
-            "embed_id": "1034906243078303764",
+            "embed_id": 1037173918114529340,
+            "Sub_Discord_ID_list": [],
+            "Last_Status": false,
             "Realzx": {
                 "ID": "92117457",
                 "note": "HVP/Granad lauchner"

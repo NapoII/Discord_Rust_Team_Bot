@@ -21,7 +21,7 @@ class loops(commands.Cog, commands.Bot):
         self.bot = bot
         
         self.myLoop.start(bot)
-    @tasks.loop(seconds = 30) # repeat after every 10 seconds
+    @tasks.loop(seconds = 120) # repeat after every 10 seconds
     
     async def myLoop(self,bot):
         await self.bot.wait_until_ready()

@@ -231,17 +231,5 @@ class MyBot(commands.Bot):
             await Adelt_messages_name_discord.send(embed=embed)
 
 
-
-
-
-
-
-
-
-
-
-
-
-
 bot = MyBot()
 bot.run(Discord_token)
