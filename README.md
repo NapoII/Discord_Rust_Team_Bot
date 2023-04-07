@@ -4,14 +4,21 @@
 
 [![downloads/total](https://img.shields.io/github/downloads/NapoII/Discord_Rust_Team_bot/total)](https://github.com/NapoII/Discord_Rust_Team_bot/archive/refs/heads/main.zip) [![github/repo-size](https://img.shields.io/github/repo-size/NapoII/Discord_Rust_Team_bot)](https://github.com/NapoII/Discord_Rust_Team_bot/archive/refs/heads/main.zip) [![github/license](https://img.shields.io/github/license/NapoII/Discord_Rust_Team_bot)](https://github.com/NapoII/Discord_Rust_Team_bot/blob/main/LICENSE) [![github/last-commit](https://img.shields.io/github/downloads/NapoII/Discord_Rust_Team_bot/total)](https://img.shields.io/github/issues/NapoII/Discord_Rust_Team_bot?style=plastic) [![github/issues_open](https://img.shields.io/github/issues/NapoII/Discord_Rust_Team_bot?style=plastic)](https://img.shields.io/github/issues-raw/NapoII/Discord_Rust_Team_bot) [![github/stars](https://img.shields.io/github/stars/NapoII/Discord_Rust_Team_bot?style=social)](https://github.com/NapoII/Discord_Rust_Team_bot/stargazers) [![discord](https://img.shields.io/discord/190307701169979393)](https://discord.gg/knTKtKVfnr)
 
-Coming soon...
+ A Discord bot that offers assistance for the game Rust. The bot can check if certain players are online on a server and display how many players are currently online. It can be hosted on a server and used by players to enhance their gaming experience. This code can be shared on GitHub to allow other Rust players to use and contribute to the bot's development. 
 ## 📝 Table of Contents
 + [Demo / Working](#demo)
 + [Install](#usage)
 + [How it works](#Use)
 + [Lizenz](#Lizenz)
 ## 🎥 Demo / Working <a name = "demo"></a>
-coming soon...
+
+[![Online_Status](https://raw.githubusercontent.com/NapoII/Discord_Rust_Team_bot/main/README_img/Online_Status.png)]
+
+[![Server_status](https://raw.githubusercontent.com/NapoII/Discord_Rust_Team_bot/main/README_img/Server_status.png)]
+
+[![player_status](https://raw.githubusercontent.com/NapoII/Discord_Rust_Team_bot/main/README_img/player_status.png)]
+
+[![ghelp_embed](https://raw.githubusercontent.com/NapoII/Discord_Rust_Team_bot/main/README_img/rust-help_embed.png)]
 
 ## 💻 Install <a name = "usage"></a>
 ```cmd
