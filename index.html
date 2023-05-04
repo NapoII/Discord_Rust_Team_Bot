@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Tic Tac Toe</title>
+  <style>
+    table {
+      border-collapse: collapse;
+    }
+    td {
+      border: 1px solid black;
+      height: 50px;
+      width: 50px;
+      text-align: center;
+      vertical-align: middle;
+      font-size: 30px;
+      cursor: pointer;
+    }
+    .x {
+      color: red;
+    }
+    .o {
+      color: blue;
+    }
+  </style>
+</head>
+<body>
+  <table>
+    <tr>
+      <td id="0"></td>
+      <td id="1"></td>
+      <td id="2"></td>
+    </tr>
+    <tr>
+      <td id="3"></td>
+      <td id="4"></td>
+      <td id="5"></td>
+    </tr>
+    <tr>
+      <td id="6"></td>
+      <td id="7"></td>
+      <td id="8"></td>
+    </tr>
+  </table>
+  <script>
+    var currentPlayer = 'x';
+    var squares = document.querySelectorAll('td');
+
+    function checkForWinner() {
+      var winningCombos = [
+        [0, 1, 2],
+        [3, 4, 5],
+        [6, 7, 8],
+        [0, 3, 6],
+        [1, 4, 7],
+        [2, 5, 8],
+        [0, 4, 8],
+        [2, 4, 6]
+      ];
+
+      for (var i = 0; i < winningCombos.length; i++) {
+        var combo = winningCombos[i];
+        var square1 = squares[combo[0]];
+        var square2 = squares[combo[1]];
+        var square3 = squares[combo[2]];
+        if (square1.classList.contains(currentPlayer) &&
+            square2.classList.contains(currentPlayer) &&
+            square3.classList.contains(currentPlayer)) {
+          return true;
+        }
+      }
+      return false;
+    }
+
+    function handleClick() {
+      if (this.classList.contains('x') || this.classList.contains('o')) {
+        return;
+      }
+      this.classList.add(currentPlayer);
+      if (checkForWinner()) {
+        alert(currentPlayer + ' wins!');
+        reset();
+        return;
+      }
+      if (currentPlayer === 'x') {
+        currentPlayer = 'o';
+      } else {
+        currentPlayer = 'x';
+      }
+    }
+
+    function reset() {
+      for (var i = 0; i < squares.length; i++) {
+        squares[i].classList.remove('x');
+        squares[i].classList.remove('o');
+      }
+      currentPlayer = 'x';
+    }
+
+    for (var i = 0; i < squares.length; i++) {
+      squares[i].addEventListener('click', handleClick);
+    }
+  </script>
+</body>
+</html>

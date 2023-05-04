@@ -1,0 +1,34 @@
+
+  _                   ______ _ _      
+ | |                 |  ____(_) |     
+ | |     ___   __ _  | |__   _| | ___ 
+ | |    / _ \ / _` | |  __| | | |/ _ \
+ | |___| (_) | (_| | | |    | | |  __/
+ |______\___/ \__, | |_|    |_|_|\___|
+               __/ |                  
+              |___/                   
+--------------------------------------
+start:            04-05-2023_00:47:55
+file:             Discord_Rust_Team_bot.py
+OS:               Windows
+User:             Napo_II
+--------------------------------------
+logNow:
+04-05-2023_00:47:56 --> Programme has been started!
+04-05-2023_00:47:56 --> Bot_Path: [e:/Pr0grame/My_ Pyhton/work_in_progress/Discord_Rust_Team_bot/Discord_Rust_Team_bot]
+
+04-05-2023_00:47:56 --> Config loaded: [ token = MTEwMzQwNzU1MDkxOTA4NjE1MQ.GyZ6pA.JMe_hXKrkfReEHF8o-ZRfHJOKf5zgBxS9WEmqQ ]
+04-05-2023_00:47:56 --> Config loaded: [ Application_ID = 1103407550919086151 ]
+04-05-2023_00:47:56 --> Config loaded: [ guild_name = Napo_Test ]
+04-05-2023_00:47:56 --> Config loaded: [ guild_id = 1103399447100133386 ]
+04-05-2023_00:47:56 --> Config loaded: [ praefix = ! ]
+04-05-2023_00:47:56 --> Config loaded: [ Activity = Farmt Sulfur ]
+04-05-2023_00:47:59 --> Discord Bot logs in | wait_until_ready
+04-05-2023_00:47:59 --> Logged in as Rust Team#9336 (ID: 1103407550919086151)
+04-05-2023_00:47:59 --> 
+
+The Bot: [ Rust Team#9336 | ID:1103407550919086151 ] is connected to [Napo_Test] id: [1103399447100133386]
+Activity_text:[Farmt Sulfur]
+
+📶 Bot is Online and Rdy to Run... 📶 
+

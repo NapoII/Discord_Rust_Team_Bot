@@ -1,0 +1,26 @@
+
+  _                   ______ _ _      
+ | |                 |  ____(_) |     
+ | |     ___   __ _  | |__   _| | ___ 
+ | |    / _ \ / _` | |  __| | | |/ _ \
+ | |___| (_) | (_| | | |    | | |  __/
+ |______\___/ \__, | |_|    |_|_|\___|
+               __/ |                  
+              |___/                   
+--------------------------------------
+start:            03-05-2023_22:20:19
+file:             Discord_Rust_Team_bot.py
+OS:               Windows
+User:             Napo_II
+--------------------------------------
+logNow:
+03-05-2023_22:20:19 --> Programme has been started!
+03-05-2023_22:20:19 --> Bot_Path: [e:/Pr0grame/My_ Pyhton/work_in_progress/Discord_Rust_Team_bot/Discord_Rust_Team_bot]
+
+03-05-2023_22:20:19 --> Config loaded: [ token = MTAwMTE3NTYwODUyMjQ0MDcyNA.G350N2.MW-xjn-iny-uiAedYm5m-XT1b6JMJF9KPf7AWc ]
+03-05-2023_22:20:19 --> Config loaded: [ Application_ID = 1103407550919086151 ]
+03-05-2023_22:20:19 --> Config loaded: [ guild_name = Napo_Test ]
+03-05-2023_22:20:19 --> Config loaded: [ guild_id = 1103399447100133386 ]
+03-05-2023_22:20:19 --> Config loaded: [ praefix = ! ]
+03-05-2023_22:20:19 --> Config loaded: [ Activity = Farmt Sulfur ]
+03-05-2023_22:20:19 --> Config loaded: [ Admin_Channel_ID =  ]

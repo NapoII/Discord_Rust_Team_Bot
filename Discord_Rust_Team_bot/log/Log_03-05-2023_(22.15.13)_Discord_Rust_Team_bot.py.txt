@@ -1,0 +1,19 @@
+
+  _                   ______ _ _      
+ | |                 |  ____(_) |     
+ | |     ___   __ _  | |__   _| | ___ 
+ | |    / _ \ / _` | |  __| | | |/ _ \
+ | |___| (_) | (_| | | |    | | |  __/
+ |______\___/ \__, | |_|    |_|_|\___|
+               __/ |                  
+              |___/                   
+--------------------------------------
+start:            03-05-2023_22:15:13
+file:             Discord_Rust_Team_bot.py
+OS:               Windows
+User:             Napo_II
+--------------------------------------
+logNow:
+03-05-2023_22:15:13 --> Programme has been started!
+03-05-2023_22:15:13 --> Bot_Path: [e:/Pr0grame/My_ Pyhton/work_in_progress/Discord_Rust_Team_bot/Discord_Rust_Team_bot]
+

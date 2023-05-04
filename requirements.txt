@@ -1,2 +1,3 @@
 logNow
 configparser
+discord

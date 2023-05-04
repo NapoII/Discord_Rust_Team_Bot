@@ -95,8 +95,9 @@ Example Usage:
         config.add_section(section)
     except:
         pass
+    option = str(option)
     config.set(section, Key, option)  # Updating existing entry
-    with open(config_dir, 'w') as configfile:
+    with open(config_dir, 'w',encoding='utf-8') as configfile:
         config.write(configfile)
     print(
         f"\nChange settings -> {config_dir}\n[{section}]\n{Key}) = {option}\n")
@@ -539,7 +540,7 @@ Datei [data.json] wird beschrieben und gespeichtert...
 """
     file1 = open(
         dir, "w", encoding="utf-8")                                 # Datei wird geöffnet
-    print("Datei ["+str(dir) + "] wird beschrieben und gespeichtert...\n")
+    print(f"File [{dir}] is described and saved...\n")
     json_object = json.dumps(dictionary, indent=4)
     # Datei wird gefüllt mit input
     file1.write(json_object)
@@ -561,9 +562,8 @@ Example Usage:
 'This is some content.'
 """
     file1 = open(
-        dir, "a", encoding="utf-8")                                 # Datei wird geöffnet
-    log("Temp_Datei ["+str(dir) + "] wird beschrieben und gespeichtert...\n")
-    # Datei wird gefüllt mit input
+        dir, "a", encoding="utf-8") 
+    log(f"Temp_Datei [{dir}] is described and saved...\n")
     file1.write(str(toFill))
     file1.close()
     return toFill
@@ -582,16 +582,15 @@ Example Usage:
 >>> temp_file_content = read_and_delt_temp_bridge("path/to/temp_file.txt")
 """
     file1 = open(dir, "r", encoding="utf-8")
-    context = (file1.read())                         # Datei wird geöffnet
-    # Datei wird gefüllt mit input
-    log("Datei ["+str(dir) + "] wird geöffnet ...\n")
+    context = (file1.read())
+    log(f"File [{dir}] is opened ...\n")
     file1.close()
     try:
         os.remove(dir)
     except OSError as e:
         log(e)
     else:
-        log("Temp_Datei ["+str(dir) + "] wurde gelöscht...\n")
+        log(f"Temp_Datei [{dir}] was deleted...\n")
     return context
 
 

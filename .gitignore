@@ -1,4 +1,5 @@
-.Discord_Rust_Team_bot.egg-info
-.build
-.dist
-.test
+/.vscode
+/Discord_Rust_Team_bot.egg-info
+/build
+/dist
+/test
