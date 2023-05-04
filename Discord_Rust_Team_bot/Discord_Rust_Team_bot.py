@@ -98,6 +98,7 @@ class MyBot(commands.Bot):
             "discord_cogs.Rust.Rust_info",
             "discord_cogs.help_command",
             "discord_cogs.Rust.server_abfrage",
+            "discord_cogs.Rust.ChannelHoper",
         ]
 
     async def setup_hook(self):
@@ -129,7 +130,7 @@ class MyBot(commands.Bot):
             else:
                 # If the role already exists, here is an error message or action
                 print(f"The role {Admin_role_name} already exists.")
-                role = discord.utils.get(guild.roles, name=Admin_role_name)
+                Admin_role = discord.utils.get(guild.roles, name=Admin_role_name)
 
             Rust_role_name = "Rust Ultras"
             Rust_role_colour = discord.Colour.red()
@@ -145,7 +146,7 @@ class MyBot(commands.Bot):
             else:
                 # If the role already exists, here is an error message or action
                 print(f"The role {Rust_role_name} already exists.")
-                role = discord.utils.get(guild.roles, name=Rust_role_name)
+                Rust_role = discord.utils.get(guild.roles, name=Rust_role_name)
 
             # Searches all existing categories on the server for the category with the name "Rust".
             category_name = "-----🎮 - Rust - 🎮------"
@@ -165,6 +166,10 @@ class MyBot(commands.Bot):
                 # Creates a new category
                 category_Rust = await guild.create_category(category_name, overwrites=overwrites)
                 print(f"The category {category_name} was created.")
+                category_Rust_name = category_Rust.name
+                category_Rust_id = category_Rust.id
+                write_config(config_dir, "Channel",
+                             "category_Rust_id", category_Rust_id)
 
                 Server_Stats = await guild.create_text_channel("📈 Server Stats", category=category_Rust)
                 print(f"The channel {Server_Stats.name} was created.")
@@ -177,7 +182,7 @@ class MyBot(commands.Bot):
 
                 player_observation = await guild.create_text_channel("🔔 Player Observation", category=category_Rust)
                 player_observation_id = player_observation.id
-                rust_info_channel_name = Rust_info.name
+                player_observation_name = player_observation.name
                 write_config(config_dir, "Channel",
                              "player_observation_id", player_observation_id)
                 print(f"The channel {player_observation.name} was created.")
@@ -194,18 +199,21 @@ class MyBot(commands.Bot):
                 Team_Chat = await guild.create_text_channel("📝 Team Chat", category=category_Rust)
                 print(f"The channel {Team_Chat.name} was created.")
 
-                Rust_main_voice = "Team-Voice"
+                Rust_main_voice = "Create new channel"
                 # Creates a new Voice channel
-                Rust_main_voice = await guild.create_voice_channel(Rust_main_voice, category=category_Rust)
-                print(
-                    f"The voice channel {Rust_main_voice.name} has been created.")
+                hopper_voice = await guild.create_voice_channel(Rust_main_voice, category=category_Rust)
+                print(f"The voice channel {hopper_voice.name} has been created.")
+                hopper_voice_channel_id = hopper_voice.id
+                hopper_voice_channel_name = hopper_voice.name
+                write_config(config_dir, "Channel",
+                             "hopper_voice_channel_id", hopper_voice_channel_id)
+
 
             # Searches all existing categories on the server for the category with the name "Rust".
             category_name = "-------💻 - Admin - 💻-------"
             category_Admin = discord.utils.get(
                 guild.categories, name=category_name)
             if category_Admin is not None:
-
                 print(f"The category {category_Admin.name} already exists.")
 
             else:
