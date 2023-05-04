@@ -39,7 +39,7 @@ file_path = os.path.dirname(sys.argv[0])
 Bot_Path = os.path.abspath(sys.argv[0])
 config_dir = os.path.join(file_path, "cfg", "config.ini")
 token_config_dir = os.path.join(file_path, "cfg", "token.ini")
-print(token_config_dir)
+log(token_config_dir)
 log("Bot_Path: ["+str(Bot_Path) + "]\n")
 
 ################################################################################################################################
@@ -113,7 +113,7 @@ class MyBot(commands.Bot):
         log(f'Logged in as {self.user} (ID: {self.user.id})')
 
         for guild in bot.guilds:
-            print(guild.id)
+            log(f"guild.id = {guild.id}")
 
             Admin_role_name = "Admin"
             Admin_role_colour = discord.Colour.blue()
@@ -126,10 +126,10 @@ class MyBot(commands.Bot):
                 Admin_role = await guild.create_role(name=Admin_role_name, colour=Admin_role_colour)
 
                 # Confirmation message
-                print(f"The role {Admin_role_name} was created.")
+                log(f"The role {Admin_role_name} was created.")
             else:
                 # If the role already exists, here is an error message or action
-                print(f"The role {Admin_role_name} already exists.")
+                log(f"The role {Admin_role_name} already exists.")
                 Admin_role = discord.utils.get(guild.roles, name=Admin_role_name)
 
             Rust_role_name = "Rust Ultras"
@@ -142,10 +142,10 @@ class MyBot(commands.Bot):
                 Rust_role = await guild.create_role(name=Rust_role_name, colour=Rust_role_colour)
 
                 # Confirmation message
-                print(f"The role {Rust_role_name} was created.")
+                log(f"The role {Rust_role_name} was created.")
             else:
                 # If the role already exists, here is an error message or action
-                print(f"The role {Rust_role_name} already exists.")
+                log(f"The role {Rust_role_name} already exists.")
                 Rust_role = discord.utils.get(guild.roles, name=Rust_role_name)
 
             # Searches all existing categories on the server for the category with the name "Rust".
@@ -155,37 +155,37 @@ class MyBot(commands.Bot):
 
             if category_Rust is not None:
 
-                print(f"The category {category_Rust.name} already exists.")
+                log(f"The category {category_Rust.name} already exists.")
 
             else:
                 overwrites = {guild.default_role: discord.PermissionOverwrite(read_messages=False), Rust_role: discord.PermissionOverwrite(
                     read_messages=True, send_messages=True, connect=True, speak=True), guild.me: discord.PermissionOverwrite(manage_channels=True)}
 
-                print(
+                log(
                     f"The category {category_name} does not yet exist and will now be created")
                 # Creates a new category
                 category_Rust = await guild.create_category(category_name, overwrites=overwrites)
-                print(f"The category {category_name} was created.")
+                log(f"The category {category_name} was created.")
                 category_Rust_name = category_Rust.name
                 category_Rust_id = category_Rust.id
                 write_config(config_dir, "Channel",
                              "category_Rust_id", category_Rust_id)
 
                 Server_Stats = await guild.create_text_channel("📈 Server Stats", category=category_Rust)
-                print(f"The channel {Server_Stats.name} was created.")
+                log(f"The channel {Server_Stats.name} was created.")
 
                 rust_bot_channel_name = Server_Stats.name
-                rust_info_channel_id = Server_Stats.id
+                rust_bot_channel_id = Server_Stats.id
                 write_config(config_dir, "Channel",
-                             "rust_info_channel_id", rust_info_channel_id)
+                             "rust_bot_channel_id", rust_bot_channel_id)
                 #write_config(config_dir, "Channel", "rust_bot_channel_name", rust_bot_channel_name)
 
                 player_observation = await guild.create_text_channel("🔔 Player Observation", category=category_Rust)
-                player_observation_id = player_observation.id
-                player_observation_name = player_observation.name
+                player_observation_channel_id = player_observation.id
+                player_observation_channel_name = player_observation.name
                 write_config(config_dir, "Channel",
-                             "player_observation_id", player_observation_id)
-                print(f"The channel {player_observation.name} was created.")
+                             "player_observation_channel_id", player_observation_channel_id)
+                log(f"The channel {player_observation.name} was created.")
 
                 Rust_info = await guild.create_text_channel("💻 Rust_info", category=category_Rust)
 
@@ -194,15 +194,15 @@ class MyBot(commands.Bot):
                 write_config(config_dir, "Channel",
                              "rust_info_channel_id", rust_info_channel_id)
                 #write_config(config_dir, "Channel", "rust_info_channel_name", rust_info_channel_name)
-                print(f"The channel {rust_info_channel_name} was created.")
+                log(f"The channel {rust_info_channel_name} was created.")
 
                 Team_Chat = await guild.create_text_channel("📝 Team Chat", category=category_Rust)
-                print(f"The channel {Team_Chat.name} was created.")
+                log(f"The channel {Team_Chat.name} was created.")
 
                 Rust_main_voice = "Create new channel"
                 # Creates a new Voice channel
                 hopper_voice = await guild.create_voice_channel(Rust_main_voice, category=category_Rust)
-                print(f"The voice channel {hopper_voice.name} has been created.")
+                log(f"The voice channel {hopper_voice.name} has been created.")
                 hopper_voice_channel_id = hopper_voice.id
                 hopper_voice_channel_name = hopper_voice.name
                 write_config(config_dir, "Channel",
@@ -214,12 +214,12 @@ class MyBot(commands.Bot):
             category_Admin = discord.utils.get(
                 guild.categories, name=category_name)
             if category_Admin is not None:
-                print(f"The category {category_Admin.name} already exists.")
+                log(f"The category {category_Admin.name} already exists.")
 
             else:
                 overwrites = {guild.default_role: discord.PermissionOverwrite(view_channel=False), Admin_role: discord.PermissionOverwrite(
                     view_channel=True), guild.me: discord.PermissionOverwrite(manage_channels=True)}
-                print(
+                log(
                     f"The category {category_name} does not yet exist and will now be created")
                 # Creates a new category
                 overwrites = {
@@ -233,7 +233,7 @@ class MyBot(commands.Bot):
                 await category_Admin.edit(position=1, reason="Set category position")
                 await category_Admin.edit(sync_permissions=True, reason="Sync category permissions")
 
-                print(f"The category {category_name} was created.")
+                log(f"The category {category_name} was created.")
 
                 console = await guild.create_text_channel(">_ console", category=category_Admin)
 
@@ -242,17 +242,17 @@ class MyBot(commands.Bot):
                 write_config(config_dir, "Channel",
                              "admin_channel_id", Admin_Channel_ID)
                 #write_config(config_dir, "Channel", "admin_channel_name", Admin_Channel_name)
-                print(f"The channel {console.name} was created.")
+                log(f"The channel {console.name} was created.")
 
                 delt_messages = await guild.create_text_channel("🚮 delt-messages", category=category_Admin)
-                print(f"The channel {delt_messages.name} was created.")
+                log(f"The channel {delt_messages.name} was created.")
 
                 delt_messages_channel_id = delt_messages.id
                 delt_messages_name = delt_messages.name
                 write_config(config_dir, "Channel",
                              "delt_messages_channel_id", delt_messages_channel_id)
                 #write_config(config_dir, "Channel", "delt_messages_channel_name", delt_messages_name)
-                print(f"The channel {delt_messages_name} was created.")
+                log(f"The channel {delt_messages_name} was created.")
 
         text = f"\n\nThe Bot: [ {self.user} | ID:{self.user.id} ] is connected to [{guild_name}] id: [{guild_id}]\nActivity_text:["+str(
             activity_text)+"]\n\n📶 Bot is Online and Rdy to Run... 📶 \n"
@@ -310,9 +310,8 @@ class MyBot(commands.Bot):
             log(str(user) + ": (#" + str(channel_m)+") say: " + content_m)
             rust_info_channel_id = int(read_config(
                 config_dir, "Channel", "rust_info_channel_id"))
-            player_observation_channel_id = int(read_config(
-                config_dir, "Channel", "player_observation_channel_id"))
-            print(
+            player_observation_channel_id = int(read_config(config_dir, "Channel", "player_observation_channel_id"))
+            log(
                 f"channel_m_id= {channel_m_id} == Rust_Bot_Channel_name= {rust_info_channel_id}")
             if channel_m_id == rust_info_channel_id or channel_m_id == player_observation_channel_id:
 
