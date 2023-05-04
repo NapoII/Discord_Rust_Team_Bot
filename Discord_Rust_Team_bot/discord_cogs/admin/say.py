@@ -10,69 +10,77 @@ from util.__funktion__ import *
 
 # get the path of the current directory
 current_dir = os.path.dirname(os.path.abspath(__file__))
+bot_path = os.path.abspath(sys.argv[0])
+bot_folder = os.path.dirname(bot_path)
 # construct the path to the config.ini file relative to the current directory
-config_dir = os.path.join("cfg", "config.ini")
-
+config_dir = os.path.join(bot_folder, "cfg", "config.ini")
 guild_id = int(read_config(config_dir, "Client", "guild_id"))
 guild = discord.Object(id=guild_id)
 
+
 class bot_say(commands.Cog):
-    def __init__(self, bot:commands.Bot)-> None:
+    def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
 
-    @app_commands.command(name = "say", description="Sendet ein Embed in ein Ziel Channel")
-
+    @app_commands.command(name="say", description="Sends an embed to a destination channel")
     async def Bot_Test(
-        self,
-        interaction: discord.Integration):
+            self,
+            interaction: discord.Integration):
         await interaction.response.send_modal(modal_input_say())
+
 
 class modal_input_say(ui.Modal, title="/say"):
 
-    say_channel_id = ui.TextInput(label ="Channel ID in der gesendet werden soll:", style = discord.TextStyle.short, placeholder="Channel ID", default="1012397680808443954", required=True, max_length=None)
-    say_title = ui.TextInput(label ="Embed Titel:", style = discord.TextStyle.short, default="default text 1", placeholder="Embed Titel", required=True, max_length=None)
-    say_text = ui.TextInput(label ="Embed Text:", style = discord.TextStyle.long, default="default text 2", placeholder="Text", required=True, max_length=None)
-    
+    say_channel_id = ui.TextInput(label="Channel ID in which to send:",
+                                  style=discord.TextStyle.short, placeholder="Channel ID", required=True, max_length=None)
+    say_title = ui.TextInput(label="Embed Titel:", style=discord.TextStyle.short,
+                             placeholder="Embed title", required=True, max_length=None)
+    say_text = ui.TextInput(label="Embed Text:", style=discord.TextStyle.long,
+                            placeholder="Text", required=True, max_length=None)
+
     #log("Send modal_input_say: say_channel_id | say_title | say_text")
-    async def on_submit(self, interaction: discord.Interaction ):
+    async def on_submit(self, interaction: discord.Interaction):
         guild = interaction.guild
-        embed=discord.Embed(title=" ", color=0xffffff)
+        embed = discord.Embed(title=" ", color=0xffffff)
         embed.set_author(name=guild)
         embed.add_field(name=self.say_title, value=self.say_text, inline=True)
 
         view = Confirm_say()
         await interaction.response.send_message(embed=embed, ephemeral=False, view=view)
-        
-        log(f"Output modal_input_say: say_channel_id={self.say_channel_id} | say_title={self.say_title} | say_text={self.say_text}")
-        log (f"Send Confrim / Cancel abfrage.")
 
+        log(
+            f"Output modal_input_say: say_channel_id={self.say_channel_id} | say_title={self.say_title} | say_text={self.say_text}")
+        log(f"Send Confrim / Cancel abfrage.")
 
         log("Send Discordembed: Test Result")
         await view.wait()
         if view.value is None:
             self.confirm_Button = False
             log(f'Timed out... self.confirm_Button = {self.confirm_Button}')
-            #return self.confirm_Button, self.say_channel_id, self.say_title, self.say_text
+            # return self.confirm_Button, self.say_channel_id, self.say_title, self.say_text
 
         elif view.value:
             self.confirm_Button = True
 
             log(f'Confirmed... self.confirm_Button = {self.confirm_Button}')
-            #return self.confirm_Button, self.say_channel_id, self.say_title, self.say_text
+            # return self.confirm_Button, self.say_channel_id, self.say_title, self.say_text
 
-            embed=discord.Embed(title=" ", color=0xffffff)
+            embed = discord.Embed(title=" ", color=0xffffff)
             embed.set_author(name=guild)
-            embed.add_field(name= self.say_title, value=self.say_text, inline=True)
+            embed.add_field(name=self.say_title,
+                            value=self.say_text, inline=True)
             say_channel_id = int(str((self.say_channel_id)))
             Channel = interaction.client.get_channel(say_channel_id)
             await Channel.send(embed=embed)
-        
+
         else:
             self.confirm_Button = False
             log(f'Cancelled... self.confirm_Button = {self.confirm_Button}')
-            #return self.confirm_Button, self.say_channel_id, self.say_title, self.say_text
+            # return self.confirm_Button, self.say_channel_id, self.say_title, self.say_text
 
-### Confirm buttons
+# Confirm buttons
+
+
 class Confirm_say(discord.ui.View):
     def __init__(self):
         super().__init__()
@@ -82,11 +90,9 @@ class Confirm_say(discord.ui.View):
     # stop the View from listening to more input.
     # We also send the user an ephemeral message that we're confirming their choice.
     @discord.ui.button(label='Confirm', style=discord.ButtonStyle.green)
-    
     async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button, ):
         await interaction.response.send_message('Confirming', ephemeral=True)
         log(f"Send Confrim / Cancel abfrage.")
-
 
         self.value = True
         self.stop()
@@ -97,9 +103,6 @@ class Confirm_say(discord.ui.View):
         await interaction.response.send_message('Cancelling', ephemeral=True)
         self.value = False
         self.stop()
-
-
-
 
 
 async def setup(bot: commands.Bot):

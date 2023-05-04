@@ -30,15 +30,20 @@ else:
 
 # get the path of the current directory
 current_dir = os.path.dirname(os.path.abspath(__file__))
+bot_path = os.path.abspath(sys.argv[0])
+bot_folder = os.path.dirname(bot_path)
 # construct the path to the config.ini file relative to the current directory
-config_dir = os.path.join("cfg", "config.ini")
+config_dir = os.path.join(bot_folder, "cfg", "config.ini")
+guild_id = int(read_config(config_dir, "Client", "guild_id"))
+guild = discord.Object(id=guild_id)
 
 file_path = os.path.dirname(sys.argv[0])
 file_path_player_watch = os.path.dirname(os.path.realpath(__file__))
 
-file_path_temp = f"{file_path_player_watch}/temp"
+file_path_temp = os.path.join(file_path_player_watch, "temp")
 file_path_temp = Folder_gen("temp", file_path_temp)
-file_path_Team_data = f"{file_path_player_watch}/Team_data.json"
+
+file_path_Team_data = os.path.join(bot_folder, "cfg", "Team_data.json")
 
 
 player_id_temp_dir = file_path_temp + "/" + \
@@ -49,10 +54,9 @@ player_name_temp_dir = file_path_temp + "/" + \
     ((File_name_with_time("player_name"))+".temp")
 
 
-guild_id = int(read_config(config_dir, "Client", "guild_id"))
 guild = discord.Object(id=guild_id)
 Rust_Bot_Channel_ID = int(read_config(
-    config_dir, "Channel", "Rust_Bot_Channel_ID"))
+    config_dir, "Channel", "player_observation_channel_id"))
 
 
 class New_player(commands.Cog):
@@ -62,7 +66,7 @@ class New_player(commands.Cog):
     @app_commands.command(name="add_player", description="Fügt Spieler der Watchlist hinzu.")
     @app_commands.describe(
         player_id="Rust Player ID from Battlemetrics",
-        player_note="Notiz für den Spieler.",
+        player_note="Note to the player.",
     )
     async def choise_team(self, interaction: discord.Interaction, player_id: int, player_note: str):
         self.player_id = player_id
@@ -118,35 +122,38 @@ class New_player(commands.Cog):
                                 value=f"{player_lastSeen}", inline=True)
                 embed.add_field(
                     name="Note", value=f"{player_note}", inline=True)
-                embed.set_footer(text=f"Team auswählen:")
+                embed.set_footer(text=f"Select team:")
         else:
             embed = discord.Embed(title=f"{Player_name}", url=f"https://www.battlemetrics.com/players/{player_id}",
                                   description=f"🟢 | ID: {player_id}", color=0xff8040)
-            embed.add_field(name="Online seit",
+            embed.add_field(name="Online since",
                             value=f"{player_lastSeen}", inline=True)
             embed.add_field(name="Note", value=f"{player_note}", inline=True)
-            embed.set_footer(text=f"Team auswählen:")
+            embed.set_footer(text=f"Select team:")
 
-        Team_list = (Team_choice(file_path_Team_data)[0])
-        Team_Note_list = (Team_choice(file_path_Team_data)[1])
+        Team_list = Team_choice(file_path_Team_data)
+        Team_Note_list = (Team_choice(file_path_Team_data))[1]
         Team_list_len = len(Team_list)
 
         x = -1
         options = [discord.SelectOption(
-            label=f"🆕Neues Team erstellen.🆕", description=f"Neues Team für Spieler hinzufügen."),]
+            label=f"🆕Create a new team.🆕", description=f"Add a new team for players."),]
         while True:
             x = x + 1
             if x == Team_list_len:
                 break
-            team_name = Team_list[x]
-            team_note = Team_Note_list[x]
-            options.append(discord.SelectOption(
-                label=f"{team_name}", description=f"{team_note}"))
+            try:
+                team_name = Team_list[x]
+                team_note = Team_Note_list[x]
+                options.append(discord.SelectOption(
+                    label=f"{team_name}", description=f"{team_note}"))
+            except:
+                pass
         select = Select(options=options)
 
         async def my_callback(interaction):
 
-            if f"{select.values[0]}" == f"🆕Neues Team erstellen.🆕":
+            if f"{select.values[0]}" == f"🆕Create a new team.🆕":
                 await interaction.response.send_modal(modal_New_team())
 
             else:
@@ -161,7 +168,7 @@ class New_player(commands.Cog):
                     JSOn_data, f"{select.values[0]}", Player_name, player_id, player_note)
                 Fill_JSOn_File(file_path_Team_data, JSOn_data)
                 embed = discord.Embed(
-                    title=f"{Player_name}", description="zu Team hinzugefügt", color=0xff8040)
+                    title=f"{Player_name}", description="added to team", color=0xff8040)
                 await interaction.response.send_message(embed=embed, ephemeral=True,)
 
         select.callback = my_callback
@@ -181,7 +188,7 @@ class Confirm_say(discord.ui.View):
     @discord.ui.button(label='Confirm', style=discord.ButtonStyle.green)
     async def confirm(self, interaction: discord.Interaction, button: discord.ui.Button, ):
         await interaction.response.send_message('Confirming', ephemeral=True)
-        log(f"Send Confrim / Cancel abfrage.")
+        log(f"Send Confrim / Cancel query.")
 
         self.value = True
         self.stop()
@@ -196,10 +203,10 @@ class Confirm_say(discord.ui.View):
 
 class modal_New_team(ui.Modal, title="New Team",):
 
-    New_Team_name = ui.TextInput(label="Name des neuen Teams", style=discord.TextStyle.short,
+    New_Team_name = ui.TextInput(label="Name of the new team", style=discord.TextStyle.short,
                                  placeholder="Team name", required=True, max_length=None)
     New_team_note = ui.TextInput(label="Embed Titel:", style=discord.TextStyle.short,
-                                 placeholder="Team Notize", required=True, max_length=None)
+                                 placeholder="Team note", required=True, max_length=None)
 
     log("modal_New_team: New_Team_name | New_team_note |")
 
@@ -212,7 +219,7 @@ class modal_New_team(ui.Modal, title="New Team",):
 
         log(
             f"Output modal_New_team: New_Team_name={self.New_Team_name} | New_team_note={self.New_team_note}")
-        log(f"Send Confrim / Cancel abfrage.")
+        log(f"Send Confrim / Cancel query.")
 
         log("Send Discordembed: Test Result")
         await view.wait()
@@ -259,7 +266,7 @@ class clear_watchlist(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
 
-    @app_commands.command(name="clear_watchlist", description="Löscht die Playerwatch list.")
+    @app_commands.command(name="clear_watchlist", description="Deletes the Playerwatch list.")
     async def clear_data(
             self,
             interaction: discord.Integration):
@@ -268,14 +275,14 @@ class clear_watchlist(commands.Cog):
 
 class modal_confrim_delt(ui.Modal, title="Clear Watchlist"):
 
-    confirm_delt = ui.TextInput(label="Bestätige mit Ja", style=discord.TextStyle.short,
-                                placeholder="Bestätige mit Ja", required=True,)
+    confirm_delt = ui.TextInput(label="Confirm with Yes", style=discord.TextStyle.short,
+                                placeholder="Confirm with Yes", required=True,)
 
-    log("Send modal_confrim_delt: Bestätige mit Ja ")
+    log("Send modal_confrim_delt: Confirm with Yes ")
 
     async def on_submit(self, interaction: discord.Interaction):
         confirm_delt = (str(self.confirm_delt)).lower()
-        if str(confirm_delt) == "ja":
+        if str(confirm_delt) == "yes":
 
             JSOn_data = open_JSOn_File(file_path_Team_data)
             file_path_Team_data_old = file_path_temp + "/" + \
@@ -306,7 +313,7 @@ class Delt_player(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
 
-    @app_commands.command(name="delt_player", description="Löscht Spieler von der Watchlist.")
+    @app_commands.command(name="delt_player", description="Deletes players from the watchlist.")
     async def choise_player_to_delt(self, interaction: discord.Interaction):
 
         dict = open_JSOn_File(file_path_Team_data)
@@ -337,7 +344,7 @@ class Delt_player(commands.Cog):
             note = dict["Teams"][Team_name_from_player][name]["note"]
 
             embed = discord.Embed(
-                title=f"🚮 Soll der {name} gelöscht werden? 🚮")
+                title=f"🚮 Should the {name} be deleted? 🚮")
             embed.add_field(
                 name="Team", value=Team_name_from_player, inline=True)
             embed.add_field(name="Battlemetrics ID", value=ID, inline=True)
@@ -346,7 +353,7 @@ class Delt_player(commands.Cog):
             view = Confirm_say()
             await interaction.response.send_message(embed=embed, ephemeral=True, view=view)
 
-            log(f"Send Confrim / Cancel abfrage.")
+            log(f"Send Confrim / Cancel query.")
 
             log("Send Discordembed: Test Result")
             await view.wait()
@@ -376,7 +383,7 @@ class Delt_player(commands.Cog):
         view = View()
         view.add_item(select)
         embed = discord.Embed(
-            title="Spieler löschen", description="Wähle einen Spieler aus!", color=0xff8040)
+            title="Delete player", description="Select a player!", color=0xff8040)
         await interaction.response.send_message(embed=embed, ephemeral=True, view=view)
 
 
@@ -384,7 +391,7 @@ class Delt_Team(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
 
-    @app_commands.command(name="delt_team", description="Löscht Team von der Watchlist.")
+    @app_commands.command(name="delt_team", description="Delete team from watchlist.")
     async def choise_Team_to_delt(self, interaction: discord.Interaction):
 
         dict = open_JSOn_File(file_path_Team_data)
@@ -413,13 +420,13 @@ class Delt_Team(commands.Cog):
             note = dict["Teams"][Team_name]["note"]
 
             embed = discord.Embed(
-                title=f"🚮 Soll das Team {Team_name} gelöscht werden? 🚮")
+                title=f"🚮 Should the team {Team_name} be deleted? 🚮")
             embed.add_field(name="Note", value=note, inline=True)
 
             view = Confirm_say()
             await interaction.response.send_message(embed=embed, ephemeral=True, view=view)
 
-            log(f"Send Confrim / Cancel abfrage.")
+            log(f"Send Confrim / Cancel query.")
 
             log("Send Discordembed: Test Result")
             await view.wait()
@@ -457,7 +464,7 @@ class Delt_Team(commands.Cog):
         view = View()
         view.add_item(select)
         embed = discord.Embed(
-            title="Spieler löschen", description="Wähle einen Spieler aus!", color=0xff8040)
+            title="Delete player", description="Select a player!", color=0xff8040)
         await interaction.response.send_message(embed=embed, ephemeral=True, view=view)
 
 
@@ -508,7 +515,7 @@ class Player_watch_loops(commands.Cog, commands.Bot):
 
             time_stemp = time.time()
             Discord_time_stemp = discord_time_convert(int(time_stemp))
-            description = f"Team note: `{Team_note}` \n aktualisiert {Discord_time_stemp}"
+            description = f"Team note: `{Team_note}` \n updated {Discord_time_stemp}"
             Sub_alert = False
 
             if online == True:
@@ -562,7 +569,7 @@ class Player_watch_loops(commands.Cog, commands.Bot):
                     timePlayed = Player_server_data[2]
                     Player_Server_url = Player_server_data[3]
 
-                    value = f" {Online_ico}  {lastSeen} \n ServerZeit: `{timePlayed}h` \n note: `{Player_note}` \n Player ID: [{Player_id}]({Player_Bat_url})"
+                    value = f" {Online_ico}  {lastSeen} \n ServerTime: `{timePlayed}h` \n note: `{Player_note}` \n Player ID: [{Player_id}]({Player_Bat_url})"
 
                     if str(name_cange[0]) == str(True):
                         embed.add_field(
@@ -588,12 +595,12 @@ class Player_watch_loops(commands.Cog, commands.Bot):
                         User = await self.bot.fetch_user(int(Player_ID))
                         if online == True:
                             embed_New_Status = discord.Embed(
-                                title="🟢 New Online Status 🟢", description=f"Team `{Team_Name}` ist jetzt Online! <#{Rust_Bot_Channel_ID}>", color=0xff8000)
+                                title="🟢 New Online Status 🟢", description=f"Team `{Team_Name}` is now online! <#{Rust_Bot_Channel_ID}>", color=0xff8000)
                             await User.send(embed=embed_New_Status)
                             await User.send(embed=embed)
                         else:
                             embed_New_Status = discord.Embed(
-                                title="🔴 New Online Status 🔴", description=f"Team `{Team_Name}` ist jetzt Offline! <#{Rust_Bot_Channel_ID}>", color=0xff0000)
+                                title="🔴 New Online Status 🔴", description=f"Team `{Team_Name}` is now offline! <#{Rust_Bot_Channel_ID}>", color=0xff0000)
                             await User.send(embed=embed_New_Status)
                             await User.send(embed=embed)
             try:
@@ -641,20 +648,20 @@ class Sub_button(discord.ui.View,):
         #json_object = json.dumps(JSOn_data, indent = 4)
 
         if User_ID in Sub_Discord_ID_list:
-            await interaction.response.send_message(f"Du Abonierst schon {Team_name}", ephemeral=True)
+            await interaction.response.send_message(f"You already subscribe the team: {Team_name}", ephemeral=True)
         else:
             Sub_Discord_ID_list.append(User_ID)
             JSOn_data["Teams"][f"{Team_name}"]["Sub_Discord_ID_list"] = Sub_Discord_ID_list
             Fill_JSOn_File(file_path_Team_data, JSOn_data)
 
-            text = f"Ich werde dich hier über Direct Message informiren wenn der Online Status von {Team_name} sich geändert hat."
+            text = f"I will inform you here via Direct Message when the online status of {Team_name} has changed."
             embed = discord.Embed(
-                title=f"🔔 Du Abonierst nun das Team: {Team_name} 🔔", description=text, color=0xff8040)
+                title=f"🔔 You are now subscribing the team: {Team_name} 🔔", description=text, color=0xff8040)
             await User.send(embed=embed)
 
-            text = f"Ich werde dich über Direct Message informiren wenn der Online Status von {Team_name} sich geändert hat."
+            text = f"I will inform you via Direct Message when the online status of {Team_name} changedt."
             embed = discord.Embed(
-                title=f"🔔 Du Abonierst nun das Team: {Team_name} 🔔", description=text, color=0xff8040)
+                title=f"🔔 You are now subscribing the team: {Team_name} 🔔", description=text, color=0xff8040)
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
     @discord.ui.button(label="🔕", style=discord.ButtonStyle.grey, custom_id="UnSub")
@@ -672,19 +679,19 @@ class Sub_button(discord.ui.View,):
             JSOn_data["Teams"][f"{Team_name}"]["Sub_Discord_ID_list"] = Sub_Discord_ID_list
             Fill_JSOn_File(file_path_Team_data, JSOn_data)
 
-            text = f"Ich werde dich hier über Direct Message nicht mehr informiren wenn der Online Status von {Team_name} sich geändert hat."
+            text = f"I will no longer inform you here via Direct Message if the online status ofn {Team_name} has changed."
             embed = discord.Embed(
-                title=f"🔕 Du Deabonnierst nun das Team: {Team_name} 🔕", description=text, color=0xff0000)
+                title=f"🔕 You are now unsubscribing to the team: {Team_name} 🔕", description=text, color=0xff0000)
             await User.send(embed=embed)
 
-            text = f"Ich werde dich über Direct Message nicht mehr informiren wenn der Online Status von {Team_name} sich geändert hat."
+            text = f"I will no longer inform you via Direct Message when the online status of {Team_name} changedt."
             embed = discord.Embed(
-                title=f"🔕 Du Deabonnierst nun das Team: {Team_name} 🔕", description=text, color=0xff0000)
+                title=f"🔕 You are now unsubscribing to the team: {Team_name} 🔕", description=text, color=0xff0000)
             await interaction.response.send_message(embed=embed, ephemeral=True)
         else:
-            await interaction.response.send_message(f"Du Abonierst zur Zeit das Team {Team_name} nicht.", ephemeral=True)
+            await interaction.response.send_message(f"You currently subscribe to the team {Team_name} not.", ephemeral=True)
 
-    @discord.ui.button(label="alle Abos Löschen", style=discord.ButtonStyle.red, custom_id="UnSubAll")
+    @discord.ui.button(label="Delete all subscriptions", style=discord.ButtonStyle.red, custom_id="UnSubAll")
     async def deltAllSubs(self, interaction: discord.Interaction, Button: discord.ui.Button):
         User = interaction.user
         User_ID = interaction.user.id
@@ -694,7 +701,7 @@ class Sub_button(discord.ui.View,):
         JSOn_data = delt_all_Player_subs(JSOn_data, User_ID)
         Fill_JSOn_File(file_path_Team_data, JSOn_data)
 
-        text = f" Du Abonierst nun kein Team mehr."
+        text = f" You no longer subscribe to a team."
         embed = discord.Embed(title=f"🔕", description=text, color=0xff0000)
         await interaction.response.send_message(embed=embed, ephemeral=True)
 

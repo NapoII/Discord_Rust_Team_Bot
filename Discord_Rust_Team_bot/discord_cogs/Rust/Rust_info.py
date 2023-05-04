@@ -12,14 +12,15 @@ from util.__funktion__ import *
 
 # get the path of the current directory
 current_dir = os.path.dirname(os.path.abspath(__file__))
+bot_path = os.path.abspath(sys.argv[0])
+bot_folder = os.path.dirname(bot_path)
 # construct the path to the config.ini file relative to the current directory
-config_dir = os.path.join("cfg", "config.ini")
-
+config_dir = os.path.join(bot_folder, "cfg", "config.ini")
 guild_id = int(read_config(config_dir, "Client", "guild_id"))
 guild = discord.Object(id=guild_id)
+
 rust_info_channel_id = int(read_config(
     config_dir, "Channel", "rust_info_channel_id"))
-
 
 
 class Rust_Info(commands.Cog, ):
@@ -33,20 +34,20 @@ class Rust_Info(commands.Cog, ):
 
         print(f"{display_avatar}")
 
-        if first.lower() == "help":
+        if first.lower() == "help" or first.lower() == "info" or first.lower() == "i":
             embed = discord.Embed(title="#rust-info", color=0x8080ff)
             embed.set_author(name=f"@{ctx.author}",
                              icon_url=f"{display_avatar}")
             embed.set_thumbnail(url="https://i.imgur.com/sdr9twR.png")
-            all_commands = """`!rust help` - Liste aller Commands
-            `!rust cctv` - Liste aller CCTV Codes
-            `!rust pager` - Liste aller Pager Codes
-            `!rust cost` - Wichtige Preise
-            `!rust fert {Anzahl an Fertilizer}` - Wie viel Scrap aus x Fertilizer
-            `!rust diesel {Anzahl an Diesel}` - Giant Excavator / Mining Quarry - Rechner
-            `!rust sulfur {Anzahl an sulfur}` - Wie viel Boom aus x Suflur
-            `!rust raid` - Raid cost Liste
-            `!rust bind` - Must-have Extra Bind´s"""
+            all_commands = """`!rust help` - List of all commands
+            `!rust cctv` - List of all CCTV codes
+            `!rust pager` - List of all pager codes
+            `!rust cost` - Important prices
+            `!rust fert {Number of Fertilizers}` - How much Scrap from x Fertilizer
+            `!rust diesel {Number of Diesel}` - Giant Excavator / Mining Quarry - Calculator
+            `!rust sulfur {Number of sulphur}` - How much boom from x suflur
+            `!rust raid` - Überfallkosten Liste
+            `!rust bind` - Must-have Extra Bind's"""
             embed.add_field(name="All Commands:",
                             value=all_commands, inline=True)
             await rust_info_channel.send(embed=embed)
@@ -99,7 +100,7 @@ class Rust_Info(commands.Cog, ):
             await rust_info_channel.send(embed=embed)
 
         if first.lower() == "cost":
-            embed = discord.Embed(title="Preisliste", color=0x8080ff)
+            embed = discord.Embed(title="Price list", color=0x8080ff)
             embed.set_author(name=f"@{ctx.author}")
             embed.set_thumbnail(url="https://i.imgur.com/EzCYdSa.png")
             Fishing_Village = "Boot `125 Scrap`\nRHIB `300 Scrap`\nOne-man Submarine `200 Scrap`\nTwo-man Submarine `300 Scrap`\n2*Torpedo `75 Scrap`"
@@ -111,7 +112,7 @@ class Rust_Info(commands.Cog, ):
 
             if second == None:
                 embed = discord.Embed(title="Fertilizer Calk", url="https://rustlabs.com/item/fertilizer",
-                                      description="`2` Fertilizer ergeben `3` Scrap", color=0x0000ff)
+                                      description="`2` Fertilizer yield `3` Scrap", color=0x0000ff)
                 embed.set_author(name=f"@{ctx.author}",
                                  icon_url=f"{display_avatar}")
                 embed.set_thumbnail(
@@ -124,7 +125,7 @@ class Rust_Info(commands.Cog, ):
                 fert_sell_Scrap = 3
                 sell_Scrap_sum = int((fert_menge/fert_sel_min)*fert_sell_Scrap)
                 embed = discord.Embed(title="Fertilizer Calk", url="https://rustlabs.com/item/fertilizer",
-                                      description=f"`{fert_menge}` Fertilizer ergeben `{sell_Scrap_sum}` Scrap", color=0x0000ff)
+                                      description=f"`{fert_menge}` Fertilizer yield `{sell_Scrap_sum}` Scrap", color=0x0000ff)
                 embed.set_author(name=f"@{ctx.author}")
                 embed.set_thumbnail(
                     url="https://rustlabs.com/img/items180/fertilizer.png")
@@ -134,7 +135,7 @@ class Rust_Info(commands.Cog, ):
 
             if second == None:
                 embed = discord.Embed(title="Giant Excavator", url="https://rustlabs.com/entity/giant-excavator",
-                                      description="Diesel 20 benötigen 40 min", color=0x8080ff)
+                                      description="Diesel 20 need 40 min", color=0x8080ff)
                 embed.set_author(name=f"@{ctx.author}",
                                  icon_url=f"{display_avatar}")
                 embed.add_field(name="HQM", value="`200.000`", inline=False)
@@ -148,17 +149,17 @@ class Rust_Info(commands.Cog, ):
                 await rust_info_channel.send(embed=embed)
 
                 embed = discord.Embed(title="Mining Quarry", url="https://rustlabs.com/item/mining-quarry",
-                                      description="Diesel 20 benötigen 43 min", color=0x8080ff)
+                                      description="Diesel 20 need 43 min", color=0x8080ff)
                 embed.set_author(name=f"@{ctx.author}",
                                  icon_url=f"{display_avatar}")
                 embed.add_field(
-                    name="Stone Quarry", value=f"Metal Ore `20.000` und Stone `100.000`", inline=False)
+                    name="Stone Quarry", value=f"Metal Ore `20.000` and Stone `100.000`", inline=False)
                 embed.add_field(name="HQM Quarry",
                                 value=f"`1.000`", inline=False)
                 embed.add_field(name="Sulfur Quarry",
                                 value=f"`20.000`", inline=False)
                 embed.add_field(
-                    name="Pump Jack", value=f"Crude Oil `1.200` und Low Grade Fuel `3.400` = Low Grade Fuel`7.000` ", inline=False)
+                    name="Pump Jack", value=f"Crude Oil `1.200` and Low Grade Fuel `3.400` = Low Grade Fuel`7.000` ", inline=False)
                 embed.set_image(
                     url="https://rustlabs.com/img/items180/mining.quarry.png")
                 await rust_info_channel.send(embed=embed)
@@ -185,7 +186,7 @@ class Rust_Info(commands.Cog, ):
                 HQM = int(one_f_HQM * Diesel_Fuel)
 
                 embed = discord.Embed(title="Giant Excavator", url="https://rustlabs.com/entity/giant-excavator",
-                                      description=f"`{Diesel_Fuel}` Diesel benötigen `{Time_need}` min.", color=0x8080ff)
+                                      description=f"`{Diesel_Fuel}` Diesel need `{Time_need}` min.", color=0x8080ff)
                 embed.set_author(name=f"@{ctx.author}",
                                  icon_url=f"{display_avatar}")
                 embed.set_thumbnail(
@@ -248,17 +249,17 @@ class Rust_Info(commands.Cog, ):
                 Oil_toFuel = int(((Oil/3)*9)+Fuel)
 
                 embed = discord.Embed(title="Mining Quarry", url="https://rustlabs.com/item/mining-quarry",
-                                      description=f"{Diesel_Fuel} Diesel benötigen {Time_need} min", color=0x8080ff)
+                                      description=f"{Diesel_Fuel} Diesel need {Time_need} min", color=0x8080ff)
                 embed.set_author(name=f"@{ctx.author}",
                                  icon_url=f"{display_avatar}")
                 embed.add_field(
-                    name="Stone Quarry", value=f"Metal Ore `{Metal}` und Stone `{Stone}`", inline=False)
+                    name="Stone Quarry", value=f"Metal Ore `{Metal}` and Stone `{Stone}`", inline=False)
                 embed.add_field(name="HQM Quarry",
                                 value=f"`{HQM}`", inline=False)
                 embed.add_field(name="Sulfur Quarry",
                                 value=f"`{Sulfur}`", inline=False)
                 embed.add_field(
-                    name="Pump Jack", value=f"Crude Oil `{Oil}` und Low Grade Fuel `{Fuel}` = Low Grade Fuel`{Oil_toFuel}` ", inline=False)
+                    name="Pump Jack", value=f"Crude Oil `{Oil}` and Low Grade Fuel `{Fuel}` = Low Grade Fuel`{Oil_toFuel}` ", inline=False)
                 embed.set_image(
                     url="https://rustlabs.com/img/items180/mining.quarry.png")
                 await rust_info_channel.send(embed=embed)
@@ -298,7 +299,7 @@ class Rust_Info(commands.Cog, ):
 
             if second == None:
 
-                text = f"Wie viel Sulfur wird benötigt:\n\nRocket: `{Rocket_Sulf} Sulfur` \nC4: `{C4_Sulf} Sulfur`\nExploammo: `{Exploammo_Sulf} Sulfur`\nSatchel: `{Satchel_Sulf} Sulfur`"
+                text = f"How much sulfur is needed:\n\nRocket: `{Rocket_Sulf} Sulfur` \nC4: `{C4_Sulf} Sulfur`\nExploammo: `{Exploammo_Sulf} Sulfur`\nSatchel: `{Satchel_Sulf} Sulfur`"
 
                 embed = discord.Embed(
                     title="Sulfur Calk", url="https://rustraidcalculator.com/HTML/raidCalc.html", description=text, color=0x0000ff)
@@ -315,7 +316,7 @@ class Rust_Info(commands.Cog, ):
                 Exploammo = int(Sulfur/Exploammo_Sulf)
                 Satchel = int(Sulfur/Satchel_Sulf)
 
-                text = f"Aus {Sulfur} Sulfur:\n\nRockets: `{Rocket}`\nC4: `{C4}`\nExploammo: `{Exploammo}`\nSatchel: `{Satchel}`"
+                text = f"From {Sulfur} Sulfur:\n\nRockets: `{Rocket}`\nC4: `{C4}`\nExploammo: `{Exploammo}`\nSatchel: `{Satchel}`"
 
                 embed = discord.Embed(
                     title="Sulfur Calk", url="https://rustraidcalculator.com/HTML/raidCalc.html", description=text, color=0x0000ff)

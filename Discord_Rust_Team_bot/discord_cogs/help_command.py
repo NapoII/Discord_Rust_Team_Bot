@@ -19,10 +19,10 @@ else:
 
 # get the path of the current directory
 current_dir = os.path.dirname(os.path.abspath(__file__))
+bot_path = os.path.abspath(sys.argv[0])
+bot_folder = os.path.dirname(bot_path)
 # construct the path to the config.ini file relative to the current directory
-config_dir = os.path.join("cfg", "config.ini")
-
-
+config_dir = os.path.join(bot_folder,"cfg", "config.ini")
 guild_id = int(read_config(config_dir, "Client", "guild_id"))
 guild = discord.Object(id=guild_id)
 
@@ -32,7 +32,7 @@ class help(commands.Cog, ):
     def __init__(self, bot: commands.Bot,) -> None:
         self.bot = bot
 
-    @app_commands.command(name="help", description="Fragen zum Discord Bot")
+    @app_commands.command(name="help", description="Questions about the Discord Bot")
     async def help_list(self,
                         interaction: discord.Interaction,):
         options = []
@@ -46,14 +46,14 @@ class help(commands.Cog, ):
 
             if auswahl == "Rust":
                 embed = discord.Embed(
-                    title="Help / Rust Bot", description="Auflistung von allen Comands", color=0x8080ff)
+                    title="Help / Rust Bot", description="Listing of all Comands", color=0x8080ff)
                 embed.set_thumbnail(url="https://i.imgur.com/Twekn9L.png")
 
-                text_serveraendern = f"`/change_server`\nMit Battlemetrics.com Server ID ermitteln und mit /change_server eintragen."
-                text_addplayer = f"`/add_player`\nMit Battlemetrics.com Spieler ID ermitteln und mit /change_server eintragen. Zusätzlich eine Notiz dem Spieler hinzufügen. Nun bei Bedarf ein neues Team erstellen, oder in einem bestehenden Team über das Menü dem neuen Spieler zuteilen."
-                text_deltplayer = f"`/delt_player`\nSpieler aus der Liste auswählen, um ihn zu entfernen."
-                text_deltteam = f"`/delt_team`\nTeam aus der Liste auswählen, um es zu entfernen."
-                text_clear = f"`/clear_watchlist`\n Achtung entfernt alle Spieler und alle Teams unwiderruflich."
+                text_serveraendern = f"`/change_server`\nUse Battlemetrics.com to determine the server ID and /change_server register."
+                text_addplayer = f"`/add_player`\nUse Battlemetrics.com to find out the player ID andt /change_server enter. Add a note to the player. Now, if necessary, create a new team or assign it to the new player in an existing team via the menu.."
+                text_deltplayer = f"`/delt_player`\nSelecting a player from the list to remove him/her."
+                text_deltteam = f"`/delt_team`\nSelect team from the list to remove it."
+                text_clear = f"`/clear_watchlist`\n Attention removes all players and all teams irrevocably."
 
                 embed.add_field(name="Rust Server ändern",
                                 value=text_serveraendern, inline=False)
@@ -71,7 +71,7 @@ class help(commands.Cog, ):
         view = View()
         view.add_item(select)
         embed = discord.Embed(
-            title="Spieler löschen", description="Wähle einen Spieler aus!", color=0xff8040)
+            title="Delete player", description="Select a player!", color=0xff8040)
         await interaction.response.send_message(embed=embed, ephemeral=True, view=view)
 
 

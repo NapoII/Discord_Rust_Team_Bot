@@ -347,7 +347,7 @@ def Team_choice(Team_data_fiel_dir):
     """
     #Team_data_fiel_dir = f"E:\Pr0grame\My_ Pyhton\work_in_progress\Discord_Bot_Napo_III_2.1\Work_Folder\Rust\Team_data.json"
 
-    team_file = Read_File_Out(Team_data_fiel_dir, "r")
+    team_file = Read_File_Out(Team_data_fiel_dir)
     res = json.loads(team_file)
     Team_list = list(res["Teams"].keys())
     Team_list_len = len(Team_list)
