@@ -11,7 +11,6 @@ contribute to the bot's development.
 ------------------------------------------------
 """
 
-
 # imports
 import os
 import sys
@@ -19,6 +18,7 @@ import time
 from asyncio import tasks
 from platform import python_version
 
+import webbrowser
 import discord
 import pyautogui
 from discord.ext import commands, tasks
@@ -40,66 +40,48 @@ file_path = os.path.dirname(sys.argv[0])
 Bot_Path = os.path.abspath(sys.argv[0])
 config_dir = os.path.join(file_path, "cfg", "config.ini")
 token_config_dir = os.path.join(file_path, "cfg", "token.ini")
-log(token_config_dir)
 log("Bot_Path: ["+str(Bot_Path) + "]\n")
 
 ################################################################################################################################
 # Load Config
 # Client
-Discord_token = read_config(token_config_dir, "Discord", "token")
-if Discord_token == None:
-    Discord_token = pyautogui.password(text='Add your Discord Bot token from:\n[ https://discord.com/developers/applications/ ]', title='Discord_Rust_Team_Bot', default='', mask='*')
-    write_config(token_config_dir, "Discord", "token", Discord_token)
-    
-Application_ID = read_config(token_config_dir, "Discord", "Application_ID")
-if Application_ID == None:
-    Application_ID = pyautogui.password(text='Add your Discord Bot Application_ID::\n[ https://discord.com/developers/applications/ ]', title='Discord_Rust_Team_Bot', default='', mask='*')
-    write_config(token_config_dir, "Discord", "Application_ID", Application_ID)
-
-guild_id = read_config(config_dir, "Client", "guild_id")
-if guild_id == None:
-    guild_id = pyautogui.prompt(text='Add your Discord Guild_id:', title='Discord_Rust_Team_Bot', default='')
-    write_config(config_dir, "Client", "guild_id", guild_id)
-guild_id = int(guild_id)
-
-guild_name = read_config(config_dir, "Client", "guild_name")
-guild = discord.Object(id=guild_id)
-praefix = read_config(config_dir, "Client", "praefix")
-activity_text = (read_config(config_dir, "Client", "Activity"))
-activity = Discord_Activity(activity_text)
-
+while True:
+    try:
+        Discord_token = read_config(token_config_dir, "Discord", "token")
+        Application_ID = read_config(token_config_dir, "Discord", "Application_ID")
+        guild_id = int(read_config(config_dir, "Client", "guild_id"))
+        guild = discord.Object(id=guild_id)
+        praefix = read_config(config_dir, "Client", "praefix")
+        activity_text = (read_config(config_dir, "Client", "Activity"))
+        activity = Discord_Activity(activity_text)
+        break
+    except:
+        pyautogui.alert(text='Fill in the empty fields in both config files!', title='Discord_Rust_Team_Bot', button='OK')
+        webbrowser.open(token_config_dir)
+        webbrowser.open(config_dir)
 # Channel
-Admin_Channel_ID = read_config(config_dir, "Channel", "Admin_Channel_ID")
-if Admin_Channel_ID == None:
-    Admin_Channel_ID = 1
-Admin_Channel_ID = int(Admin_Channel_ID)
 
-rust_info_channel_id = read_config(config_dir, "Channel", "rust_info_channel_id")
-if rust_info_channel_id == None:
-    rust_info_channel_id = 1
-rust_info_channel_id = int(rust_info_channel_id)
+Admin_Channel_ID = int(read_config(config_dir, "Channel", "Admin_Channel_ID"))
+#Admin_Channel_name = read_config(config_dir, "Channel", "Admin_Channel_name")
+rust_info_channel_id = int(read_config(
+    config_dir, "Channel", "rust_info_channel_id"))
 
-delt_messages_channel_id = read_config(config_dir, "Channel", "delt_messages_channel_id")
-if delt_messages_channel_id == None:
-    delt_messages_channel_id = 1
-delt_messages_channel_id = int(delt_messages_channel_id)
+#server_stats_channel_id_name =  read_config(config_dir, "Channel", "server_stats_channel_id_name")
+#rust_info_channel_name =  read_config(config_dir, "Channel", "rust_info_channel_name")
+delt_messages_channel_id = int(read_config(
+    config_dir, "Channel", "delt_messages_channel_id"))
 
 
 # Rust Config
-battlemetrics_Server_ID = read_config(config_dir, "Rust", "battlemetrics_Server_ID")
-if battlemetrics_Server_ID == None:
-    battlemetrics_Server_ID = 20243678
-battlemetrics_api_server = f"https://api.battlemetrics.com/servers/{battlemetrics_Server_ID}"
+battlemetrics_Server_ID = read_config(
+    config_dir, "Rust", "battlemetrics_Server_ID")
+battlemetrics_api_server = "https://api.battlemetrics.com/servers/" + \
+    str(battlemetrics_Server_ID)
+Rust_Server_description_message_id = int(read_config(
+    config_dir, "Rust", "Rust_Server_description_message_id"))
+Rust_Server_embed_message_id = int(read_config(
+    config_dir, "Rust", "Rust_Server_embed_message_id"))
 
-Rust_Server_description_message_id = read_config(config_dir, "Rust", "Rust_Server_description_message_id")
-if Rust_Server_description_message_id == None:
-    Rust_Server_description_message_id = 1
-Rust_Server_description_message_id = int(Rust_Server_description_message_id)
-
-Rust_Server_embed_message_id = read_config(config_dir, "Rust", "Rust_Server_embed_message_id")
-if Rust_Server_embed_message_id == None:
-    Rust_Server_embed_message_id = 1
-Rust_Server_embed_message_id = int(Rust_Server_embed_message_id)
 
 ################################################################################################################################
 ################################################################################################################################
@@ -119,7 +101,7 @@ class MyBot(commands.Bot):
             "discord_cogs.admin.say",
             "discord_cogs.Rust.Rust_info",
             "discord_cogs.help_command",
-            "discord_cogs.Rust.server_abfrage",
+            "discord_cogs.Rust.server_stats",
             "discord_cogs.Rust.ChannelHoper",
         ]
 
@@ -134,12 +116,7 @@ class MyBot(commands.Bot):
         await self.wait_until_ready()
         log(f'Logged in as {self.user} (ID: {self.user.id})')
 
-        
         for guild in bot.guilds:
-
-            guild_name = guild.name
-            write_config(config_dir, "Client", "guild_name", guild_name)
-            log(f"guild.name= {guild_name} | guild.id= {guild.id}")
 
             Admin_role_name = "Admin"
             Admin_role_colour = discord.Colour.blue()
@@ -152,10 +129,10 @@ class MyBot(commands.Bot):
                 Admin_role = await guild.create_role(name=Admin_role_name, colour=Admin_role_colour)
 
                 # Confirmation message
-                log(f"The role {Admin_role_name} was created.")
+                log(f"The role {Admin_role_name} was created.","b")
             else:
                 # If the role already exists, here is an error message or action
-                log(f"The role {Admin_role_name} already exists.")
+                log(f"The role {Admin_role_name} already exists.","b")
                 Admin_role = discord.utils.get(guild.roles, name=Admin_role_name)
 
             Rust_role_name = "Rust Ultras"
@@ -168,10 +145,10 @@ class MyBot(commands.Bot):
                 Rust_role = await guild.create_role(name=Rust_role_name, colour=Rust_role_colour)
 
                 # Confirmation message
-                log(f"The role {Rust_role_name} was created.")
+                log(f"The role {Rust_role_name} was created.", "b")
             else:
                 # If the role already exists, here is an error message or action
-                log(f"The role {Rust_role_name} already exists.")
+                log(f"The role {Rust_role_name} already exists.", "b")
                 Rust_role = discord.utils.get(guild.roles, name=Rust_role_name)
 
             # Searches all existing categories on the server for the category with the name "Rust".
@@ -200,25 +177,15 @@ class MyBot(commands.Bot):
                 Server_Stats = await guild.create_text_channel("📈 Server Stats", category=category_Rust)
                 log(f"The channel {Server_Stats.name} was created.")
 
-
-                rust_bot_channel_name = Server_Stats.name
+                server_stats_channel_id_name = Server_Stats.name
                 server_stats_channel_id = Server_Stats.id
-
-                Embed = discord.Embed(title="Restart the Rust Discord Team Bot", url="https://www.battlemetrics.com/servers/rust/20243678", description="After the channels have been created, restart the [ Rust Discord Team Bot ] so that you can get started.\nEnter the ID of the Rust server von battlemetrics with /change_server\nAs an example from [EU] Facepunch 1 it is 20243678", color=0x8080ff)
-                msg = await Server_Stats.send(embed=Embed)
-
-                log(f"Discord: Send [rust_server_embed_message] msg[{msg.id}] with new embed")
-                write_config(config_dir, "Rust","rust_server_embed_message_id", str(msg.id))
-
-                
                 write_config(config_dir, "Channel","server_stats_channel_id", server_stats_channel_id)
-
+                #write_config(config_dir, "Channel", "server_stats_channel_id_name", server_stats_channel_id_name)
 
                 player_observation = await guild.create_text_channel("🔔 Player Observation", category=category_Rust)
                 player_observation_channel_id = player_observation.id
-                player_observation_channel_name = player_observation.name
-                write_config(config_dir, "Channel",
-                             "player_observation_channel_id", player_observation_channel_id)
+                player_observation_name = player_observation.name
+                write_config(config_dir, "Channel", "player_observation_channel_id", player_observation_channel_id)
                 log(f"The channel {player_observation.name} was created.")
 
                 Rust_info = await guild.create_text_channel("💻 Rust_info", category=category_Rust)
@@ -278,6 +245,12 @@ class MyBot(commands.Bot):
                 #write_config(config_dir, "Channel", "admin_channel_name", Admin_Channel_name)
                 log(f"The channel {console.name} was created.")
 
+                embed = discord.Embed(
+                    title="🍾Nice, the Bot has created the required channels for the Rust Team🍾", color=0xff8080)
+                embed.add_field(name="💻Restart the Bot Now💻", value="So that the bot can run its routine", inline=True)
+                await console.send(embed=embed)
+
+
                 delt_messages = await guild.create_text_channel("🚮 delt-messages", category=category_Admin)
                 log(f"The channel {delt_messages.name} was created.")
 
@@ -288,14 +261,9 @@ class MyBot(commands.Bot):
                 #write_config(config_dir, "Channel", "delt_messages_channel_name", delt_messages_name)
                 log(f"The channel {delt_messages_name} was created.")
 
-        text = f"\n\nThe Bot: [ {self.user} | ID:{self.user.id} ] is connected to [{guild_name}] id: [{guild_id}]\nActivity_text:["+str(
-            activity_text)+"]\n\n📶 Bot is Online and Rdy to Run... 📶 \n"
+        text = f"\n\nThe Bot: [ {self.user} | ID:{self.user.id} ] is connected to [{guild.name}] id: [{guild.id}]\nActivity_text:[{activity_text}]\n\n📶 Bot is Online and Rdy to Run... 📶 \n"
 
-        Admin_Channel_ID = read_config(config_dir, "Channel", "Admin_Channel_ID")
-        if Admin_Channel_ID == None:
-            Admin_Channel_ID = 1
-        Admin_Channel_ID = int(Admin_Channel_ID)
-
+        Admin_Channel_ID = int(read_config(config_dir, "Channel", "Admin_Channel_ID"))
         channel = self.get_channel(Admin_Channel_ID)
         log(str(text))
 
@@ -313,8 +281,8 @@ class MyBot(commands.Bot):
         embed = discord.Embed(
             title="📶 Bot is Online and Rdy to Run... 📶", color=0xff8080)
         embed.add_field(name="client.name", value=self.user.name, inline=True)
-        embed.add_field(name="guild_name", value=guild_name, inline=True)
-        embed.add_field(name="guild_id", value=str(guild_id), inline=True)
+        embed.add_field(name="guild.name", value=guild.name, inline=True)
+        embed.add_field(name="guild.id", value=str(guild.id), inline=True)
         await channel.send(embed=embed)
 
         @bot.event
@@ -345,18 +313,12 @@ class MyBot(commands.Bot):
                 return
 
             log(str(user) + ": (#" + str(channel_m)+") say: " + content_m)
-            rust_info_channel_id = read_config(config_dir, "Channel", "rust_info_channel_id")
-            if rust_info_channel_id == None:
-                rust_info_channel_id = 1
-            rust_info_channel_id = int(rust_info_channel_id)
-
-            player_observation_channel_id = read_config(config_dir, "Channel", "player_observation_channel_id")
-            if player_observation_channel_id == None:
-                player_observation_channel_id = 1
-            player_observation_channel_id = int(player_observation_channel_id)
-
+            rust_info_channel_id = int(read_config(
+                config_dir, "Channel", "rust_info_channel_id"))
+            player_observation_channel_id = int(read_config(
+                config_dir, "Channel", "player_observation_channel_id"))
             log(
-                f"channel_m_id= {channel_m_id} == Rust_Bot_Channel_name= {rust_info_channel_id}")
+                f"channel_m_id= {channel_m_id} == server_stats_channel_id_name= {rust_info_channel_id}")
             if channel_m_id == rust_info_channel_id or channel_m_id == player_observation_channel_id:
 
                 await message.delete()
@@ -384,13 +346,8 @@ class MyBot(commands.Bot):
             embed.add_field(name=message_author,
                             value="Channel: "+message_channel, inline=True)
             embed.set_footer(text=message_content)
-
-            delt_messages_channel_id = read_config(config_dir, "Channel", "delt_messages_channel_id")
-            if guild_id == None:
-                guild_id = 1
-            guild_id = int(guild_id)
-
-
+            delt_messages_channel_id = int(read_config(
+                config_dir, "Channel", "delt_messages_channel_id"))
             Adelt_messages_name_discord = bot.get_channel(
                 delt_messages_channel_id)
             await Adelt_messages_name_discord.send(embed=embed)

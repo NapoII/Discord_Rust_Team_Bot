@@ -60,6 +60,8 @@ player_name_temp_dir = file_path_temp + "/" + \
 
 
 guild = discord.Object(id=guild_id)
+player_observation_channel_id = int(read_config(
+    config_dir, "Channel", "player_observation_channel_id"))
 
 Rust_Bot_Channel_ID = read_config(config_dir, "Channel", "player_observation_channel_id")
 if Rust_Bot_Channel_ID == None:
@@ -218,7 +220,7 @@ class modal_New_team(ui.Modal, title="New Team",):
     log("modal_New_team: New_Team_name | New_team_note |")
 
     async def on_submit(self, interaction: discord.Interaction):
-
+        
         embed = discord.Embed(title=self.New_Team_name,
                               description=self.New_team_note, color=0xc0c0c0)
         view = Confirm_say()
@@ -240,8 +242,8 @@ class modal_New_team(ui.Modal, title="New Team",):
 
             embed = discord.Embed(title=self.New_Team_name,
                                   description=self.New_team_note, color=0xc0c0c0)
-            #Rust_Bot_Channel_ID = int(read_config(config_dir, "Channel", "Rust_Bot_Channel_ID"))
-            #Channel = interaction.client.get_channel(Rust_Bot_Channel_ID)
+            #player_observation_channel_id = int(read_config(config_dir, "Channel", "player_observation_channel_id"))
+            #Channel = interaction.client.get_channel(player_observation_channel_id)
             # Team_Card_embed = await Channel.send(embed=embed, view=Sub_button())
             #Team_Card_embed_id = (Team_Card_embed.id)
             Team_Card_embed_id = 0
@@ -301,18 +303,21 @@ class modal_confrim_delt(ui.Modal, title="Clear Watchlist"):
             x = -1
             while True:
                 x = x + 1
-                if x == embed_ID_list_len:
+                if x == embed_ID_list_len or embed_ID_list_len == 0:
                     break
-                #Rust_Bot_Channel_ID = int(read_config(config_dir, "Channel", "Rust_Bot_Channel_ID"))
-                Rust_Bot_Channel = interaction.client.get_channel(
-                    Rust_Bot_Channel_ID)
-                msg = await Rust_Bot_Channel.fetch_message(embed_ID_list[x])
-                await msg.delete()
+                #player_observation_channel_id = int(read_config(config_dir, "Channel", "player_observation_channel_id"))
+                try:
+                    player_observation_channel = interaction.client.get_channel(player_observation_channel_id)
+                    msg = await player_observation_channel.fetch_message(embed_ID_list[x])
+                    await msg.delete()
+                    log (f"No msg delt","blue")
+                except:
+                    log (f"No msg to delt","blue")
 
             dictionary = {"Teams": {}}
             Fill_JSOn_File(file_path_Team_data, dictionary)
             embed = discord.Embed(
-                title="Watchlist", description="Watch liste wurde ge-cleart.", color=0xc0c0c0)
+                title="Watchlist", description="Watch list was cleared.", color=0xc0c0c0)
             await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
@@ -455,10 +460,9 @@ class Delt_Team(commands.Cog):
                 JSOn_data = delt_Team(JSOn_data, Team_name)
                 Fill_JSOn_File(file_path_Team_data, JSOn_data)
 
-                Rust_Bot_Channel = interaction.client.get_channel(
-                    Rust_Bot_Channel_ID)
+                player_observation_channel = interaction.client.get_channel(player_observation_channel_id)
                 log(f"msg delt: {embed_id}: Team embed ({Team_name})")
-                msg = await Rust_Bot_Channel.fetch_message(embed_id)
+                msg = await player_observation_channel.fetch_message(embed_id)
                 await msg.delete()
 
             else:
@@ -602,32 +606,31 @@ class Player_watch_loops(commands.Cog, commands.Bot):
                         User = await self.bot.fetch_user(int(Player_ID))
                         if online == True:
                             embed_New_Status = discord.Embed(
-                                title="🟢 New Online Status 🟢", description=f"Team `{Team_Name}` is now online! <#{Rust_Bot_Channel_ID}>", color=0xff8000)
+                                title="🟢 New Online Status 🟢", description=f"Team `{Team_Name}` is now online! <#{player_observation_channel_id}>", color=0xff8000)
                             await User.send(embed=embed_New_Status)
                             await User.send(embed=embed)
                         else:
                             embed_New_Status = discord.Embed(
-                                title="🔴 New Online Status 🔴", description=f"Team `{Team_Name}` is now offline! <#{Rust_Bot_Channel_ID}>", color=0xff0000)
+                                title="🔴 New Online Status 🔴", description=f"Team `{Team_Name}` is now offline! <#{player_observation_channel_id}>", color=0xff0000)
                             await User.send(embed=embed_New_Status)
                             await User.send(embed=embed)
+
             try:
-                Rust_Bot_Channel = self.bot.get_channel(Rust_Bot_Channel_ID)
-                msg = await Rust_Bot_Channel.fetch_message(Team_embed_id)
+                player_observation_channel = self.bot.get_channel(player_observation_channel_id)
+                msg = await player_observation_channel.fetch_message(Team_embed_id)
                 await msg.edit(embed=embed)
-                log(
-                    f"Discord: Edit Embed from Team [{Team_Name}] msg.id: [{msg.id}]")
+                log(f"Discord: Edit Embed from Team [{Team_Name}] msg.id: [{msg.id}]")
             except:
                 try:
                     JSOn_data = open_JSOn_File(file_path_Team_data)
-                    Rust_Bot_Channel = self.bot.get_channel(
-                        Rust_Bot_Channel_ID)
-                    Team_Card_embed = await Rust_Bot_Channel.send(embed=embed, view=Sub_button())
+                    player_observation_channel = self.bot.get_channel(player_observation_channel_id)
+                    Team_Card_embed = await player_observation_channel.send(embed=embed, view=Sub_button())
                     Team_Card_embed_id = (Team_Card_embed.id)
                     JSOn_data["Teams"][Team_Name]["embed_id"] = Team_Card_embed_id
                     Fill_JSOn_File(file_path_Team_data, JSOn_data)
-                    log(
-                        f"Discord: send new Embed from Team [{Team_Name}] msg.id: [{Team_Card_embed_id}]")
+                    log(f"Discord: send new Embed from Team [{Team_Name}] msg.id: [{Team_Card_embed_id}]")
                 except:
+                    print("passpasspasspasspasspasspasspasspasspasspasspass")
                     pass
 
 

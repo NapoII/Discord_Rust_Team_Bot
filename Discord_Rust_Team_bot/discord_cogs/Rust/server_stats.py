@@ -19,23 +19,10 @@ bot_path = os.path.abspath(sys.argv[0])
 bot_folder = os.path.dirname(bot_path)
 # construct the path to the config.ini file relative to the current directory
 config_dir = os.path.join(bot_folder, "cfg", "config.ini")
-
-guild_id = read_config(config_dir, "Client", "guild_id")
-if guild_id == None:
-    guild_id = 1
-guild_id = guild_id
-
+guild_id = int(read_config(config_dir, "Client", "guild_id"))
 guild = discord.Object(id=guild_id)
-
-server_stats_channel_id = read_config(config_dir, "Channel", "server_stats_channel_id")
-if server_stats_channel_id == None:
-    server_stats_channel_id = 1
-server_stats_channel_id = int(server_stats_channel_id)
-
-admin_channel_id = read_config(config_dir, "Channel", "admin_channel_id")
-if admin_channel_id == None:
-    admin_channel_id = 1
-admin_channel_id = admin_channel_id
+server_stats_channel_id = int(read_config(config_dir, "Channel", "server_stats_channel_id"))
+admin_channel_id = int(read_config(config_dir, "Channel", "admin_channel_id"))
 
 
 class loops(commands.Cog, commands.Bot):
@@ -48,25 +35,12 @@ class loops(commands.Cog, commands.Bot):
     @tasks.loop(seconds=120)  # repeat after every 10 seconds
     async def myLoop(self, bot):
         await self.bot.wait_until_ready()
-        server_id = read_config(config_dir, "Rust", "battlemetrics_server_id")
-        if server_id == None:
-            server_id = 20243678
-        server_id = int(server_id)
-
+        server_id = int(read_config(
+            config_dir, "Rust", "battlemetrics_server_id"))
         url = f"https://api.battlemetrics.com/servers/{server_id}"
         response = requests.get(url)
         response_json = response.json()
         status_code = response.status_code
-        print("\n--------------------------------------------------------------------------------")
-        print(response_json)
-        print("\n--------------------------------------------------------------------------------")
-
-        try:
-            Server_name = response_json["data"]["attributes"]["name"]
-        except:
-            server_stats_channel = self.bot.get_channel(server_stats_channel_id)
-            embed=discord.Embed(title="405 status: Unknown Server", description="There is no server with the given id", color=0xff0000)
-            msg = await server_stats_channel.send(embed=embed)
 
         Server_name = response_json["data"]["attributes"]["name"]
         server_ip = response_json["data"]["attributes"]["ip"]
@@ -95,74 +69,65 @@ class loops(commands.Cog, commands.Bot):
 
         await self.bot.change_presence(activity=discord.Game(activity_text))
 
-        server_stats_channel = self.bot.get_channel(server_stats_channel_id)
-
+        Rust_Bot_Channel = self.bot.get_channel(server_stats_channel_id)
 
         activity__channel_Name_text = f"🟢{players}von{maxPlayers}🟢Online"
-        log(f"cange: server_stats_channel name to = {activity__channel_Name_text}")
+        log(f"cange: Rust_Bot_Channel name to = {activity__channel_Name_text}")
+        await Rust_Bot_Channel.edit(name=activity__channel_Name_text)
+        #write_config(config_dir, "Channel", "rust_bot_channel_name",activity__channel_Name_text)
 
+        log(f"Discord: change Bot Status[{activity_text}]")
 
+        map_data = get_map_img(server_id)
+        if map_data != False:
+            thumbnailUrl = map_data[0]
+            map_url = map_data[1]
+            seed = map_data[2]
+            size = map_data[3]
 
-        if server_stats_channel == None:
-            pass
-        else:
-
-            #write_config(config_dir, "Channel", "server_stats_channel_name",activity__channel_Name_text)
-
-            log(f"Discord: change Bot Status[{activity_text}]")
-
-            map_data = get_map_img(server_id)
-            if map_data != False:
-                thumbnailUrl = map_data[0]
-                map_url = map_data[1]
-                seed = map_data[2]
-                size = map_data[3]
-
-            embed = discord.Embed(
-                title=f"{Server_name}", url=f"https://www.battlemetrics.com/servers/rust/{server_id}")
-            embed.set_thumbnail(url=server_headerimage)
-            embed.add_field(name="status", value=f"{server_status}", inline=True)
+        embed = discord.Embed(
+            title=f"{Server_name}", url=f"https://www.battlemetrics.com/servers/rust/{server_id}")
+        embed.set_thumbnail(url=server_headerimage)
+        embed.add_field(name="status", value=f"{server_status}", inline=True)
+        embed.add_field(
+            name="Player", value=f"{players}/{maxPlayers}", inline=True)
+        if map_data == False:
             embed.add_field(
-                name="Player", value=f"{players}/{maxPlayers}", inline=True)
-            if map_data == False:
-                embed.add_field(
-                    name="Map", value="🚫 Server Map is not Vanilla 🚫", inline=False)
-            if map_data != False:
-                embed.add_field(
-                    name="Map", value=f"[Seed: {seed} Size: {size}]({map_url})", inline=False)
-                embed.set_image(url=thumbnailUrl)
-            embed.add_field(name="Connect to the server:",
-                            value=Server_ip_text, inline=False)
+                name="Map", value="🚫 Server Map is not Vanilla 🚫", inline=False)
+        if map_data != False:
+            embed.add_field(
+                name="Map", value=f"[Seed: {seed} Size: {size}]({map_url})", inline=False)
+            embed.set_image(url=thumbnailUrl)
+        embed.add_field(name="Connect to the server:",
+                        value=Server_ip_text, inline=False)
 
-            try:
-                rust_server_embed_message_id = read_config(config_dir, "Rust", "rust_server_embed_message_id")
-                if rust_server_embed_message_id == None:
-                    rust_server_embed_message_id = 1
-                rust_server_embed_message_id = int(rust_server_embed_message_id)
+        try:
+            rust_server_embed_message_id = read_config(
+                config_dir, "Rust", "rust_server_embed_message_id")
+            msg = await Rust_Bot_Channel.fetch_message(rust_server_embed_message_id)
+            await msg.edit(embed=embed)
+            log(
+                f"Discord: Edit [rust_server_embed_message] msg[{msg.id}] with new embed")
+        except:
+            msg = await Rust_Bot_Channel.send(embed=embed)
+            log(
+                f"Discord: Send [rust_server_embed_message] msg[{msg.id}] with new embed")
+            write_config(config_dir, "Rust",
+                         "rust_server_embed_message_id", str(msg.id))
 
-                msg = await server_stats_channel.fetch_message(rust_server_embed_message_id)
-                await msg.edit(embed=embed)
-                log(
-                    f"Discord: Edit [rust_server_embed_message] msg[{msg.id}] with new embed")
-            except:
-                msg = await server_stats_channel.send(embed=embed)
-                log(
-                    f"Discord: Send [rust_server_embed_message] msg[{msg.id}] with new embed")
-                write_config(config_dir, "Rust","rust_server_embed_message_id", str(msg.id))
-
-            try:
-                rust_server_description_message_id = read_config(
-                    config_dir, "Rust", "rust_server_description_message_id")
-                msg = await server_stats_channel.fetch_message(rust_server_description_message_id)
-                await msg.edit(content=rust_description)
-                log(
-                    f"Discord: Edit [rust_server_description_message] msg[{msg.id}] with new content")
-            except:
-                msg = await server_stats_channel.send(content=rust_description)
-                write_config(config_dir, "Rust",
-                            "rust_server_description_message_id", str(msg.id))
-                log(
-                    f"Discord: Send [rust_server_description_message] msg[{msg.id}]")
+        try:
+            rust_server_description_message_id = read_config(
+                config_dir, "Rust", "rust_server_description_message_id")
+            msg = await Rust_Bot_Channel.fetch_message(rust_server_description_message_id)
+            await msg.edit(content=rust_description)
+            log(
+                f"Discord: Edit [rust_server_description_message] msg[{msg.id}] with new content")
+        except:
+            msg = await Rust_Bot_Channel.send(content=rust_description)
+            write_config(config_dir, "Rust",
+                         "rust_server_description_message_id", str(msg.id))
+            log(
+                f"Discord: Send [rust_server_description_message] msg[{msg.id}]")
 
 
 class change_server_id(commands.Cog):
