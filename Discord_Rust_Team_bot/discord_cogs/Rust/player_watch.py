@@ -34,7 +34,12 @@ bot_path = os.path.abspath(sys.argv[0])
 bot_folder = os.path.dirname(bot_path)
 # construct the path to the config.ini file relative to the current directory
 config_dir = os.path.join(bot_folder, "cfg", "config.ini")
-guild_id = int(read_config(config_dir, "Client", "guild_id"))
+
+guild_id = read_config(config_dir, "Client", "guild_id")
+if guild_id == None:
+    guild_id = 1
+guild_id = int(guild_id)
+
 guild = discord.Object(id=guild_id)
 
 file_path = os.path.dirname(sys.argv[0])
@@ -55,9 +60,11 @@ player_name_temp_dir = file_path_temp + "/" + \
 
 
 guild = discord.Object(id=guild_id)
-Rust_Bot_Channel_ID = int(read_config(
-    config_dir, "Channel", "player_observation_channel_id"))
 
+Rust_Bot_Channel_ID = read_config(config_dir, "Channel", "player_observation_channel_id")
+if Rust_Bot_Channel_ID == None:
+    Rust_Bot_Channel_ID = 1
+Rust_Bot_Channel_ID = int(Rust_Bot_Channel_ID)
 
 class New_player(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:

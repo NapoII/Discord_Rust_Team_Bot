@@ -2,12 +2,22 @@
     "Teams": {
         "Team apsel.ws": {
             "note": "Das kann ja heiter werden.",
-            "embed_id": 1103559299667599460,
+            "embed_id": 1104837944688251071,
             "Sub_Discord_ID_list": [],
             "Last_Status": false,
             "Napo_II": {
                 "ID": "63483374",
                 "note": "test"
+            }
+        },
+        "HUso": {
+            "note": "31",
+            "embed_id": 1104837950166028308,
+            "Sub_Discord_ID_list": [],
+            "Last_Status": false,
+            "TimeToShine": {
+                "ID": "1128527379",
+                "note": "Huso"
             }
         }
     }

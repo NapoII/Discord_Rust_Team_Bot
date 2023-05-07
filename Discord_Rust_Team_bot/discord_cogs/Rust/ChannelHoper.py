@@ -16,12 +16,24 @@ bot_path = os.path.abspath(sys.argv[0])
 bot_folder = os.path.dirname(bot_path)
 # construct the path to the config.ini file relative to the current directory
 config_dir = os.path.join(bot_folder, "cfg", "config.ini")
-guild_id = int(read_config(config_dir, "Client", "guild_id"))
+
+guild_id = read_config(config_dir, "Client", "guild_id")
+if guild_id == None:
+    guild_id = 1
+guild_id = int(guild_id)
 guild = discord.Object(id=guild_id)
 
 
-Channel_hoper_id =  int(read_config(config_dir, "Channel", "hopper_voice_channel_id"))
-Channel_hoper_kat_id = int(read_config(config_dir, "Channel", "category_Rust_id"))
+Channel_hoper_id =  read_config(config_dir, "Channel", "hopper_voice_channel_id")
+if Channel_hoper_id == None:
+    Channel_hoper_id = 1
+Channel_hoper_id = int(Channel_hoper_id)
+
+Channel_hoper_kat_id = read_config(config_dir, "Channel", "category_Rust_id")
+if Channel_hoper_kat_id == None:
+    Channel_hoper_kat_id = 1
+Channel_hoper_kat_id = int(Channel_hoper_kat_id)
+
 Channel_name_list = ["Airfield", "Bandit Camp", "Harbor", "Junkyard","Large Oil Rig","Launch Site","Lighthouse","Military Tunnels","Oil Rig","Outpost","Mining Outpost","Power Plant","Sewer Branch","Satellite Dish Array","The Dome","Train Yard","Train Tunnel Network","Water Treatment Plant"]
 
 class ChannelHoper(commands.Cog):

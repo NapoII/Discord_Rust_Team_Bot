@@ -16,11 +16,18 @@ bot_path = os.path.abspath(sys.argv[0])
 bot_folder = os.path.dirname(bot_path)
 # construct the path to the config.ini file relative to the current directory
 config_dir = os.path.join(bot_folder, "cfg", "config.ini")
-guild_id = int(read_config(config_dir, "Client", "guild_id"))
+
+guild_id = read_config(config_dir, "Client", "guild_id")
+if guild_id == None:
+    guild_id = 1
+guild_id = int(guild_id)
+
 guild = discord.Object(id=guild_id)
 
-rust_info_channel_id = int(read_config(
-    config_dir, "Channel", "rust_info_channel_id"))
+rust_info_channel_id = read_config(config_dir, "Channel", "rust_info_channel_id")
+if rust_info_channel_id == None:
+    rust_info_channel_id = 1
+rust_info_channel_id = int(rust_info_channel_id)
 
 
 class Rust_Info(commands.Cog, ):

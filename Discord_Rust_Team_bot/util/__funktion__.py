@@ -64,8 +64,10 @@ def read_config(config_dir, section, option):
     config = ConfigParser()
     config.read(config_dir)
     load_config = (config[section][option])
+    if len(load_config) == 0 or load_config == "None":
+        load_config = None
 
-    log("Config loaded: [ "+(option) + " = " + (load_config)+" ]", "g")
+    log(f"Config loaded: [ {option} = {load_config} ]", "g")
 
     return load_config
 
