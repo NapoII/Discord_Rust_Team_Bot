@@ -35,38 +35,44 @@ if Channel_hoper_kat_id == None:
 Channel_hoper_kat_id = int(Channel_hoper_kat_id)
 
 Channel_name_list = ["Airfield", "Bandit Camp", "Harbor", "Junkyard","Large Oil Rig","Launch Site","Lighthouse","Military Tunnels","Oil Rig","Outpost","Mining Outpost","Power Plant","Sewer Branch","Satellite Dish Array","The Dome","Train Yard","Train Tunnel Network","Water Treatment Plant"]
-
+player_have_channel_list = []
 class ChannelHoper(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.voice_channels = {}  # Ein Wörterbuch zur Verfolgung der erstellten Kanäle
-
+        #self.player_have_channel_list = {}
     async def create_voice_channel(self, user):
         category = discord.utils.get(user.guild.categories, id=Channel_hoper_kat_id)
         if not category:
-            print(f"Kategorie mit ID {Channel_hoper_kat_id} wurde nicht gefunden.")
+            log(f"Category with ID {Channel_hoper_kat_id} was not found.")
             return
 
         guild = user.guild
-        random_pic = random.choice(Channel_name_list)
-        new_channel = await category.create_voice_channel(f"{random_pic} | {user.name}")
-        await user.move_to(new_channel)
+        user_id = user.id
 
-        self.voice_channels[new_channel.id] = user.id
+        if user_id not in self.voice_channels.values():
+            #if user.id not in self.voice_channels.values:
+            random_pic = random.choice(Channel_name_list)
+            new_channel = await category.create_voice_channel(f"{random_pic}")
+            #new_channel = await category.create_voice_channel(f"{random_pic} | {user.name}")
+            await user.move_to(new_channel)
+            self.voice_channels[new_channel.id] = user.id
+
 
     async def delete_voice_channel(self, channel):
         if channel.id in self.voice_channels:
             del self.voice_channels[channel.id]
             await channel.delete()
 
+
     @commands.Cog.listener()
     async def on_voice_state_update(self, member, before, after):
-        if before.channel == after.channel:  # Der Benutzer hat seinen Sprachstatus nicht geändert
+        if before.channel == after.channel:  # The user has not changed his language status
             return
 
-        if after.channel and after.channel.id == Channel_hoper_id:  # Der Benutzer ist dem beobachteten Kanal beigetreten
+        if after.channel and after.channel.id == Channel_hoper_id:  # The user has joined the channel being watched
             await self.create_voice_channel(member)
-        elif before.channel and before.channel.id in self.voice_channels:  # Der Benutzer hat den erstellten Kanal verlassen
+        elif before.channel and before.channel.id in self.voice_channels:  # The user has left the created channel
             channel = discord.utils.get(member.guild.voice_channels, id=before.channel.id)
             if channel and len(channel.members) == 0:
                 await self.delete_voice_channel(channel)
