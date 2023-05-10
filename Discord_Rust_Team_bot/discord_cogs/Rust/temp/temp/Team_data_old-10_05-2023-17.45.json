@@ -1,0 +1,16 @@
+{
+    "Teams": {
+        "testtesm": {
+            "note": "test",
+            "embed_id": 1105883010546544833,
+            "Sub_Discord_ID_list": [
+                189025602236448778
+            ],
+            "Last_Status": true,
+            "Napo_II": {
+                "ID": "63483374",
+                "note": "test"
+            }
+        }
+    }
+}

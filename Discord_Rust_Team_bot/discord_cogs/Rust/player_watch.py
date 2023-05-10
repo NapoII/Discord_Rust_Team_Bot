@@ -18,6 +18,7 @@ import requests
 from discord.ext import commands, tasks
 from discord.ui import Select, View
 from numpy import append
+import asyncio
 
 from util.__funktion__ import *
 
@@ -72,118 +73,147 @@ class New_player(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
 
-    @app_commands.command(name="add_player", description="Fügt Spieler der Watchlist hinzu.")
+    @app_commands.command(name="add_player", description="Adds players to the watchlist.")
     @app_commands.describe(
-        player_id="Rust Player ID from Battlemetrics",
-        player_note="Note to the player.",
+        player_name="Rust Player Name or id with id:{player_id}",
+        player_note="Note for the player.",
     )
-    async def choise_team(self, interaction: discord.Interaction, player_id: int, player_note: str):
-        self.player_id = player_id
+    async def choise_team(self, interaction: discord.Interaction, player_name: str, player_note: str):
+        self.player_name = player_name
         self.player_note = player_note
 
-        create_and_fill_temp_bridge(player_id, player_id_temp_dir)
-        create_and_fill_temp_bridge(player_note, player_note_temp_dir)
+        thinking = self.bot.get_emoji(123456789)  # replace with your thinking emoji ID
+        
 
-        url = f"https://api.battlemetrics.com/players/{player_id}"
-        response = requests.get(url)
-        response_json = response.json()
-        status_code = response.status_code
+        # Send the embed with the thinking animation
+        embed = discord.Embed(title="Adding player...", description=f"{thinking} Thinking...", color=discord.Color.blurple())
+        msg = await interaction.response.send_message(embed=embed, ephemeral=True, )
 
-        Player_name = response_json["data"]["attributes"]["name"]
-        create_and_fill_temp_bridge(Player_name, player_name_temp_dir)
+        battlemetrics_server_id = read_config(config_dir, "Rust", "battlemetrics_server_id")
 
-        battlemetrics_Server_ID = read_config(
-            config_dir, "Rust", "battlemetrics_Server_ID")
-        url = f"https://api.battlemetrics.com/players/{player_id}/servers/{battlemetrics_Server_ID}"
-        response = requests.get(url)
-        response_json = response.json()
-        status_code = response.status_code
+        if "id-" in player_name:
+            player_id = player_name.split("id:")[1]
 
-        try:
-            player_online_status = response_json["data"]["attributes"]["online"]
-            player_lastSeen = response_json["data"]["attributes"]["lastSeen"]
-            time_convert = ISO_Time_to_Milisec(player_lastSeen)
-            player_lastSeen = discord_time_convert(time_convert)
-            played_on_server = True
-        except:
-
-            Player_server_data = Player_Server_info(
-                player_id, battlemetrics_Server_ID)
-            if Player_server_data == "Rate Limit Exceeded":
-                while True:
-                    Player_server_data = Player_Server_info(
-                        player_id, battlemetrics_Server_ID)
-                    if Player_server_data != "Rate Limit Exceeded":
-                        break
-            if Player_server_data == "400":
-                player_online_status = "never_played"
-
-        if player_online_status == False or player_online_status == "never_played":
-            if player_online_status == "never_played":
-                embed = discord.Embed(title=f"{Player_name}", url=f"https://www.battlemetrics.com/players/{player_id}",
-                                      description=("❌ | ID: "+str(player_id)), color=0xff0000)
-                value = f"❌ `Never played on that Server` ❌ | note: `{player_note}`"
-                embed.add_field(name=Player_name, value=value, inline=True)
-            else:
-                embed = discord.Embed(title=f"{Player_name}", url=f"https://www.battlemetrics.com/players/{player_id}",
-                                      description=("🔴 | ID: "+str(player_id)), color=0xff0000)
-                embed.add_field(name="Last Seen",
-                                value=f"{player_lastSeen}", inline=True)
-                embed.add_field(
-                    name="Note", value=f"{player_note}", inline=True)
-                embed.set_footer(text=f"Select team:")
         else:
-            embed = discord.Embed(title=f"{Player_name}", url=f"https://www.battlemetrics.com/players/{player_id}",
-                                  description=f"🟢 | ID: {player_id}", color=0xff8040)
-            embed.add_field(name="Online since",
-                            value=f"{player_lastSeen}", inline=True)
-            embed.add_field(name="Note", value=f"{player_note}", inline=True)
-            embed.set_footer(text=f"Select team:")
+            player_id = get_player_id_from_name(player_name, battlemetrics_server_id)
 
-        Team_list = Team_choice(file_path_Team_data)
-        Team_Note_list = (Team_choice(file_path_Team_data))[1]
-        Team_list_len = len(Team_list)
+        if player_id == None:
+            s_url = f"https://www.battlemetrics.com/players?filter%5Bsearch%5D={player_name}&filter%5BplayerFlags%5D=&filter%5Bservers%5D={battlemetrics_server_id}&sort=-lastSeen"
+            embed=discord.Embed(title=f"No search results with {player_name}", url=s_url, description="Try to find the player by yourself and add the ID to the next request with `id:{battlemetrics_player_id}`.", color=0xff0000)
+            await interaction.response.send_message(embed=embed, ephemeral=True)
+        else:
+            player_id = int(player_id)
+            create_and_fill_temp_bridge(player_id, player_id_temp_dir)
+            create_and_fill_temp_bridge(player_note, player_note_temp_dir)
 
-        x = -1
-        options = [discord.SelectOption(
-            label=f"🆕Create a new team.🆕", description=f"Add a new team for players."),]
-        while True:
-            x = x + 1
-            if x == Team_list_len:
-                break
+            url = f"https://api.battlemetrics.com/players/{player_id}"
+            response = requests.get(url)
+            response_json = response.json()
+            status_code = response.status_code
+
+            Player_name = response_json["data"]["attributes"]["name"]
+            create_and_fill_temp_bridge(Player_name, player_name_temp_dir)
+
+            battlemetrics_Server_ID = read_config(
+                config_dir, "Rust", "battlemetrics_Server_ID")
+            url = f"https://api.battlemetrics.com/players/{player_id}/servers/{battlemetrics_Server_ID}"
+            response = requests.get(url)
+            response_json = response.json()
+            status_code = response.status_code
+
             try:
-                team_name = Team_list[x]
-                team_note = Team_Note_list[x]
-                options.append(discord.SelectOption(
-                    label=f"{team_name}", description=f"{team_note}"))
+                player_online_status = response_json["data"]["attributes"]["online"]
+                player_lastSeen = response_json["data"]["attributes"]["lastSeen"]
+                time_convert = ISO_Time_to_Milisec(player_lastSeen)
+                player_lastSeen = discord_time_convert(time_convert)
+                played_on_server = True
             except:
-                pass
-        select = Select(options=options)
 
-        async def my_callback(interaction):
+                Player_server_data = Player_Server_info(
+                    player_id, battlemetrics_Server_ID)
+                if Player_server_data == "Rate Limit Exceeded":
+                    while True:
+                        Player_server_data = Player_Server_info(
+                            player_id, battlemetrics_Server_ID)
+                        if Player_server_data != "Rate Limit Exceeded":
+                            break
+                if Player_server_data == "400":
+                    player_online_status = "never_played"
 
-            if f"{select.values[0]}" == f"🆕Create a new team.🆕":
-                await interaction.response.send_modal(modal_New_team())
-
+            if player_online_status == False or player_online_status == "never_played":
+                if player_online_status == "never_played":
+                    embed = discord.Embed(title=f"{Player_name}", url=f"https://www.battlemetrics.com/players/{player_id}",
+                                        description=("❌ | ID: "+str(player_id)), color=0xff0000)
+                    value = f"❌ `Never played on that Server` ❌ | note: `{player_note}`"
+                    embed.add_field(name=Player_name, value=value, inline=True)
+                else:
+                    embed = discord.Embed(title=f"{Player_name}", url=f"https://www.battlemetrics.com/players/{player_id}",
+                                        description=("🔴 | ID: "+str(player_id)), color=0xff0000)
+                    embed.add_field(name="Last Seen",
+                                    value=f"{player_lastSeen}", inline=True)
+                    embed.add_field(
+                        name="Note", value=f"{player_note}", inline=True)
+                    embed.set_footer(text=f"Select team:")
             else:
-                player_id_int = int(
-                    read_and_delt_temp_bridge(player_id_temp_dir))
-                player_note_str = (
-                    read_and_delt_temp_bridge(player_note_temp_dir))
-                player_name_str = (
-                    read_and_delt_temp_bridge(player_name_temp_dir))
-                JSOn_data = open_JSOn_File(file_path_Team_data)
-                JSOn_data = add_player(
-                    JSOn_data, f"{select.values[0]}", Player_name, player_id, player_note)
-                Fill_JSOn_File(file_path_Team_data, JSOn_data)
-                embed = discord.Embed(
-                    title=f"{Player_name}", description="added to team", color=0xff8040)
-                await interaction.response.send_message(embed=embed, ephemeral=True,)
+                embed = discord.Embed(title=f"{Player_name}", url=f"https://www.battlemetrics.com/players/{player_id}",
+                                    description=f"🟢 | ID: {player_id}", color=0xff8040)
+                embed.add_field(name="Online since",
+                                value=f"{player_lastSeen}", inline=True)
+                embed.add_field(name="Note", value=f"{player_note}", inline=True)
+                embed.set_footer(text=f"Select team:")
 
-        select.callback = my_callback
-        view = View()
-        view.add_item(select)
-        await interaction.response.send_message(embed=embed, ephemeral=True, view=view)
+            Team_list = Team_choice(file_path_Team_data)
+            Team_list_len = len(Team_list)
+
+            x = -1
+            options = [discord.SelectOption(
+                label=f"🆕Create a new team.🆕", description=f"Add a new team for players."),]
+            while True:
+                x = x + 1
+                if x == Team_list_len:
+                    break
+                try:
+                    team_name,  team_note = Team_list[x]
+
+                    options.append(discord.SelectOption(
+                        label=f"{team_name}", description=f"{team_note}"))
+                except:
+                    pass
+            select = Select(options=options)
+
+            async def my_callback(interaction):
+
+                if f"{select.values[0]}" == f"🆕Create a new team.🆕":
+                    await interaction.response.send_modal(modal_New_team())
+
+                else:
+                    player_id_int = int(
+                        read_and_delt_temp_bridge(player_id_temp_dir))
+                    player_note_str = (
+                        read_and_delt_temp_bridge(player_note_temp_dir))
+                    player_name_str = (
+                        read_and_delt_temp_bridge(player_name_temp_dir))
+                    JSOn_data = open_JSOn_File(file_path_Team_data)
+                    JSOn_data = add_player(
+                        JSOn_data, f"{select.values[0]}", Player_name, player_id, player_note)
+                    Fill_JSOn_File(file_path_Team_data, JSOn_data)
+                    embed = discord.Embed(
+                        title=f"{Player_name}", description="added to team", color=0xff8040)
+                    await interaction.response.send_message(embed=embed, ephemeral=True,)
+
+            select.callback = my_callback
+            view = View()
+            view.add_item(select)
+            
+            if msg is not None:
+                await msg.edit(embed=embed, view=view)
+            else:
+                await interaction.channel.send(embed=embed, delete_after=10, view=view)
+
+
+
+
+
 
 
 class Confirm_say(discord.ui.View):
@@ -630,7 +660,6 @@ class Player_watch_loops(commands.Cog, commands.Bot):
                     Fill_JSOn_File(file_path_Team_data, JSOn_data)
                     log(f"Discord: send new Embed from Team [{Team_Name}] msg.id: [{Team_Card_embed_id}]")
                 except:
-                    print("passpasspasspasspasspasspasspasspasspasspasspass")
                     pass
 
 

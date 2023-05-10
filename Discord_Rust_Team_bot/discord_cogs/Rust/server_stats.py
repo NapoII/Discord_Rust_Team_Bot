@@ -71,7 +71,7 @@ class loops(commands.Cog, commands.Bot):
 
         Rust_Bot_Channel = self.bot.get_channel(server_stats_channel_id)
 
-        activity__channel_Name_text = f"🟢{players}von{maxPlayers}🟢Online"
+        activity__channel_Name_text = f"🟢{players} of {maxPlayers}🟢Online"
         log(f"cange: Rust_Bot_Channel name to = {activity__channel_Name_text}")
         await Rust_Bot_Channel.edit(name=activity__channel_Name_text)
         #write_config(config_dir, "Channel", "rust_bot_channel_name",activity__channel_Name_text)

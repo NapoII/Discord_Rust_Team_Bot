@@ -340,7 +340,7 @@ def Team_choice(Team_data_fiel_dir):
         - Team_Note_list (list): A list of notes associated with each team name as strings.
 
     Example Usage:
-        >>> team_data_dir = "E:\Pr0grame\My_ Pyhton\work_in_progress\Discord_Bot_Napo_III_2.1\Work_Folder\Rust\Team_data.json"
+        >>> team_data_dir = "\Work_Folder\Rust\Team_data.json"
         >>> teams, notes = Team_choice(team_data_dir)
         >>> print(teams)
         ['Red Team', 'Blue Team', 'Green Team']
@@ -407,6 +407,12 @@ def add_player(dict, team, name, id, note):
             }
         }
     """
+    print(f"team={team}")
+    print(f"name={name}")
+    print(f"id={id}")
+    print(f"note={note}")
+
+
     dict["Teams"][f"{team}"][f"{name}"] = {"ID": f"{id}", "note": f"{note}"}
     return dict
 
@@ -1019,3 +1025,79 @@ Example Usage:
         except:
             pass
     return JSOn_data
+
+
+def scrape(url):
+    try:
+        page = requests.get(url)
+        return page.text
+    except:
+        print(f'Could not scrape: {url}')
+        return False
+
+
+from bs4 import BeautifulSoup
+
+def get_player_id_from_name(player_name, server_id):
+    log(f"get_player_id_from_name({player_name}, {server_id}) use url_end = lastSeen")
+    url = f"https://www.battlemetrics.com/players?filter%5Bsearch%5D={player_name}&filter%5BplayerFlags%5D=&filter%5Bservers%5D={server_id}&sort=-lastSeen"
+    
+    html = scrape(url)
+    soup = BeautifulSoup(html, 'html.parser')
+
+    # FFinding the HTML element with the class 'player-name'
+    player_name_herf = soup.find('a', {'class': 'player-name'})
+
+    if player_name_herf is not None:
+        # If the element was found, output the URL from the 'href' attribute
+        href = player_name_herf.get('href')
+        print(href)
+        # Split the string into a list using '/' as the delimiter, and get the last item
+        result = href.split('/')[-1]
+
+        bat_name = get_player_name(result)
+        print(f"bat_name= {bat_name} player_name= {player_name}" )
+        if bat_name == player_name:
+            return result
+        else:
+            
+            log(f"get_player_id_from_name({player_name}, {server_id}) use url_end = Score")
+            url = f"https://www.battlemetrics.com/players?filter%5Bsearch%5D={player_name}&filter%5BplayerFlags%5D=&filter%5Bservers%5D={server_id}&sort=score"
+            html = scrape(url)
+            soup = BeautifulSoup(html, 'html.parser')
+
+            # FFinding the HTML element with the class 'player-name'
+            player_name_herf = soup.find('a', {'class': 'player-name'})
+
+            if player_name_herf is not None:
+                # If the element was found, output the URL from the 'href' attribute
+                href = player_name_herf.get('href')
+                print(href)
+                # Split the string into a list using '/' as the delimiter, and get the last item
+                result = href.split('/')[-1]
+
+                bat_name = get_player_name(result)
+                print(f"bat_name= {bat_name} player_name= {player_name}" )
+                if bat_name == player_name:
+                    return result
+                else:
+                    log(f" get_player_id_from_name({player_name}, {server_id}) The item was not found.")
+                    return None
+
+    else:
+        # If the element was not found, give an error message
+        log(f" get_player_id_from_name({player_name}, {server_id}) The item was not found.")
+        return None
+
+
+def get_player_name(player_id):
+    url = f'https://api.battlemetrics.com/players/{player_id}'
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        data = response.json()['data']
+        name = data['attributes']['name']
+        return name
+    else:
+        print(f"Error {response.status_code}: Could not get data from {url}")
+        return None
