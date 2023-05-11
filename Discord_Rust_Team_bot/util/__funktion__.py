@@ -27,6 +27,7 @@ import requests
 from discord import app_commands, ui
 from discord.ext import commands
 from logNow import log
+import re
 
 #    Prevents the code from being executed when the file is imported as a module.
 if __name__ == "__funktion__":
@@ -1101,3 +1102,128 @@ def get_player_name(player_id):
     else:
         print(f"Error {response.status_code}: Could not get data from {url}")
         return None
+
+
+def team_cheacker(server_id, steam_url):
+    data = {}
+    battlemetrics_url = f"https://www.battlemetrics.com/servers/rust/{server_id}"
+
+    battlemetricsPlayers = get_battlemetrics_players(battlemetrics_url)
+    initialFriendList = get_friend_list(steam_url)
+    if initialFriendList == None:
+        return None
+
+    friends = { initialFriendList['steamId']: initialFriendList['name']}
+    leftToCheck = compare_players(battlemetricsPlayers, initialFriendList['friends'])
+
+    while True:
+        if len(leftToCheck) == 0:
+            break
+
+        newLeft = []
+        for steamId, name in leftToCheck:
+            friendList = get_friend_list(f'https://steamcommunity.com/profiles/{steamId}/friends')
+            friends[friendList['steamId']] = friendList['name']
+            for steamIdC, nameC in compare_players(battlemetricsPlayers, friendList['friends']):
+                if steamIdC not in friends and not any(steamIdC in x for x in newLeft):
+                    newLeft.append([steamIdC, nameC])
+
+        leftToCheck = newLeft
+
+
+    print('Team Detector Result:\n')
+    print('Name:'.ljust(34) + 'SteamID:'.ljust(19) + 'Link:')
+
+    for steamId, name in friends.items():
+        data[name] = {"steam_url": steam_url}
+    return data
+
+def get_battlemetrics_players(url):
+    
+    content = scrape(url)
+    if content == False:
+        print('Could not scrape Battlemetrics Server Page')
+        exit()
+
+    regex = r'<a class="css-zwebxb" href="/players/\d+?">(.+?)</a>'
+    players = re.findall(regex, content)
+    if len(players) == 0:
+        print('Could not match players on the Battlemetrics Server Page.')
+        exit()
+
+    return players
+
+def get_friend_list(url):
+    if not 'friends' in url:
+        url += '/friends'
+
+    content = scrape(url)
+    if content == False:
+        print('Could not scrape friend list page')
+        exit()
+
+    regex = r'<meta property="og:title" content="(.+?)">'
+    name = re.findall(regex, content)[0]
+    regex = r',"steamid":"(.+?)",'
+    try:
+        steamId = re.findall(regex, content)[0]
+        regex = r'data-steamid="(.+?)".*?<div class="friend_block_content">(.+?)<br>'
+        friends = re.findall(regex, content, re.MULTILINE|re.S)
+
+        return {"name": name, "steamId": steamId, "friends": friends}
+    except:
+        return None
+
+
+def compare_players(battlemetricsPlayers, friendList):
+    players = []
+    for steamId, name in friendList:
+        if name in battlemetricsPlayers:
+            players.append([steamId, name])
+
+    return players
+
+
+def generate_list_of_online_players(server_id):
+
+    url = f'https://api.battlemetrics.com/servers/{server_id}?include=player'
+
+    # Send the GET request with the specified parameters
+    response = requests.get(url)
+
+    response_json = response.json()
+    # Print the response content
+    # print(response.content)
+
+    data = {}
+    included = response_json["included"]
+    included_len = (len(included))-1
+    x = -1
+    while True:
+        if x == included_len:
+            break
+        x = x + 1
+
+        name = included[x]["attributes"]["name"]
+        id =  included[x]["attributes"]["id"]
+        data[name] = id
+    return data
+
+
+def zip_data_steamname_and_bat_id (data_steam_name, data_battlemetrics_server_id_name):
+    data_steam_name_len = len(data_steam_name)
+
+
+    data_steam_only_name = list(data_steam_name.keys())
+    print(data_steam_name)
+    x = -1
+    while True:
+        if x == (data_steam_name_len)-1:
+            break
+        x = x +1
+
+        name_steam = data_steam_only_name[x]
+        if name_steam in data_battlemetrics_server_id_name:
+            data_steam_name[name_steam]["ID"] = data_battlemetrics_server_id_name[name_steam]
+    
+    return(data_steam_name)

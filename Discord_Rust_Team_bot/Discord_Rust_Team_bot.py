@@ -103,6 +103,7 @@ class MyBot(commands.Bot):
             "discord_cogs.help_command",
             "discord_cogs.Rust.server_stats",
             "discord_cogs.Rust.ChannelHoper",
+            "discord_cogs.Rust.Team_Checker",
         ]
 
     async def setup_hook(self):
