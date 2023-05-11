@@ -48,7 +48,8 @@ log("Bot_Path: ["+str(Bot_Path) + "]\n")
 while True:
     try:
         Discord_token = read_config(token_config_dir, "Discord", "token")
-        Application_ID = read_config(token_config_dir, "Discord", "Application_ID")
+        Application_ID = read_config(
+            token_config_dir, "Discord", "Application_ID")
         guild_id = int(read_config(config_dir, "Client", "guild_id"))
         guild = discord.Object(id=guild_id)
         praefix = read_config(config_dir, "Client", "praefix")
@@ -56,7 +57,8 @@ while True:
         activity = Discord_Activity(activity_text)
         break
     except:
-        pyautogui.alert(text='Fill in the empty fields in both config files!', title='Discord_Rust_Team_Bot', button='OK')
+        pyautogui.alert(text='Fill in the empty fields in both config files!',
+                        title='Discord_Rust_Team_Bot', button='OK')
         webbrowser.open(token_config_dir)
         webbrowser.open(config_dir)
 # Channel
@@ -130,11 +132,12 @@ class MyBot(commands.Bot):
                 Admin_role = await guild.create_role(name=Admin_role_name, colour=Admin_role_colour)
 
                 # Confirmation message
-                log(f"The role {Admin_role_name} was created.","b")
+                log(f"The role {Admin_role_name} was created.", "b")
             else:
                 # If the role already exists, here is an error message or action
-                log(f"The role {Admin_role_name} already exists.","b")
-                Admin_role = discord.utils.get(guild.roles, name=Admin_role_name)
+                log(f"The role {Admin_role_name} already exists.", "b")
+                Admin_role = discord.utils.get(
+                    guild.roles, name=Admin_role_name)
 
             Rust_role_name = "Rust Ultras"
             Rust_role_colour = discord.Colour.red()
@@ -180,13 +183,15 @@ class MyBot(commands.Bot):
 
                 server_stats_channel_id_name = Server_Stats.name
                 server_stats_channel_id = Server_Stats.id
-                write_config(config_dir, "Channel","server_stats_channel_id", server_stats_channel_id)
+                write_config(config_dir, "Channel",
+                             "server_stats_channel_id", server_stats_channel_id)
                 #write_config(config_dir, "Channel", "server_stats_channel_id_name", server_stats_channel_id_name)
 
                 player_observation = await guild.create_text_channel("🔔 Player Observation", category=category_Rust)
                 player_observation_channel_id = player_observation.id
                 player_observation_name = player_observation.name
-                write_config(config_dir, "Channel", "player_observation_channel_id", player_observation_channel_id)
+                write_config(
+                    config_dir, "Channel", "player_observation_channel_id", player_observation_channel_id)
                 log(f"The channel {player_observation.name} was created.")
 
                 Rust_info = await guild.create_text_channel("💻 Rust_info", category=category_Rust)
@@ -209,7 +214,6 @@ class MyBot(commands.Bot):
                 hopper_voice_channel_name = hopper_voice.name
                 write_config(config_dir, "Channel",
                              "hopper_voice_channel_id", hopper_voice_channel_id)
-
 
             # Searches all existing categories on the server for the category with the name "Rust".
             category_name = "-------💻 - Admin - 💻-------"
@@ -248,9 +252,9 @@ class MyBot(commands.Bot):
 
                 embed = discord.Embed(
                     title="🍾Nice, the Bot has created the required channels for the Rust Team🍾", color=0xff8080)
-                embed.add_field(name="💻Restart the Bot Now💻", value="So that the bot can run its routine", inline=True)
+                embed.add_field(name="💻Restart the Bot Now💻",
+                                value="So that the bot can run its routine", inline=True)
                 await console.send(embed=embed)
-
 
                 delt_messages = await guild.create_text_channel("🚮 delt-messages", category=category_Admin)
                 log(f"The channel {delt_messages.name} was created.")
@@ -264,10 +268,10 @@ class MyBot(commands.Bot):
 
         text = f"\n\nThe Bot: [ {self.user} | ID:{self.user.id} ] is connected to [{guild.name}] id: [{guild.id}]\nActivity_text:[{activity_text}]\n\n📶 Bot is Online and Rdy to Run... 📶 \n"
 
-        Admin_Channel_ID = int(read_config(config_dir, "Channel", "Admin_Channel_ID"))
+        Admin_Channel_ID = int(read_config(
+            config_dir, "Channel", "Admin_Channel_ID"))
         channel = self.get_channel(Admin_Channel_ID)
         log(str(text))
-
 
         embed = discord.Embed(title=py_name, color=0xff80ff)
         embed.set_author(name="created by Napo_II",

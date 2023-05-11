@@ -376,6 +376,7 @@ def add_player(dict, team, name, id, note):
         - name (str): The name of the new player.
         - id (str): The ID of the new player.
         - note (str): A note associated with the new player.
+        - steam (str): Optinal steam info
 
     Returns:
         - dict (dict): The updated dictionary containing the new player's information.
@@ -408,11 +409,6 @@ def add_player(dict, team, name, id, note):
             }
         }
     """
-    print(f"team={team}")
-    print(f"name={name}")
-    print(f"id={id}")
-    print(f"note={note}")
-
 
     dict["Teams"][f"{team}"][f"{name}"] = {"ID": f"{id}", "note": f"{note}"}
     return dict
@@ -575,7 +571,7 @@ Example Usage:
     log(f"Temp_Datei [{dir}] is described and saved...\n")
     file1.write(str(toFill))
     file1.close()
-    return toFill
+    return dir
 
 
 def read_and_delt_temp_bridge(dir):

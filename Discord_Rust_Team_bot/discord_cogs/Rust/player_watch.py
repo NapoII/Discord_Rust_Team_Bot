@@ -265,20 +265,16 @@ class modal_New_team(ui.Modal, title="New Team",):
         if view.value is None:
             self.confirm_Button = False
             log(f'Timed out... self.confirm_Button = {self.confirm_Button}')
-            # return self.confirm_Button, self.say_channel_id, self.say_title, self.say_text
 
         elif view.value:
             self.confirm_Button = True
 
             embed = discord.Embed(title=self.New_Team_name,
                                   description=self.New_team_note, color=0xc0c0c0)
-            #player_observation_channel_id = int(read_config(config_dir, "Channel", "player_observation_channel_id"))
-            #Channel = interaction.client.get_channel(player_observation_channel_id)
-            # Team_Card_embed = await Channel.send(embed=embed, view=Sub_button())
-            #Team_Card_embed_id = (Team_Card_embed.id)
+
             Team_Card_embed_id = 0
             log(f'Confirmed... self.confirm_Button = {self.confirm_Button}')
-            # return self.confirm_Button, self.say_channel_id, self.say_title, self.say_text
+
 
             JSOn_data = open_JSOn_File(file_path_Team_data)
             JSOn_data = add_Team(JSOn_data, self.New_Team_name,
@@ -290,8 +286,7 @@ class modal_New_team(ui.Modal, title="New Team",):
 
             # add_player(dict, team, name, id, note):
 
-            JSOn_data = add_player(
-                JSOn_data, self.New_Team_name, player_name_str, player_id_int, player_note_str)
+            JSOn_data = add_player(JSOn_data, self.New_Team_name, player_name_str, player_id_int, player_note_str)
 
             Fill_JSOn_File(file_path_Team_data, JSOn_data)
 
