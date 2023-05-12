@@ -24,43 +24,53 @@ Cheak if more Teammates <a name = "Team_cheak"
 
 ### Create Channel Structure <a name = "Structure"></a>
 The bot automatically creates the required channels when it is first started so that you can get started straight away.
-![First Start](README_img\auto_channel_gen.gif)
+
+![First Start](https://raw.githubusercontent.com/NapoII/Discord_Rust_Team_Bot/main/README_img/auto_channel_gen.gif)
 
 To keep the Discord Rust area as clear as possible, only as many voice channels as necessary are automatically created and deleted again.
-![First Start](README_img\voice_channel_create_auto.gif)
+
+![First Start](https://raw.githubusercontent.com/NapoII/Discord_Rust_Team_Bot/main/README_img/voice_channel_create_auto.gif)
 
 ### Rust help Commands <a name = "!rust"></a>
+
 Various small helper tools are included
-![!rust help](/README_img\rust_help_list.png)
+
+![!rust help](https://raw.githubusercontent.com/NapoII/Discord_Rust_Team_Bot/main/README_img/rust_help_list.png)
 
 e.g. you can calculate how much you get from x diesel and how much of it you can craft for raiding.
-![!rust diesel](/README_img\rust_diesel.gif)
+
+![!rust diesel](https://raw.githubusercontent.com/NapoII/Discord_Rust_Team_Bot/main/README_img/rust_diesel.gif)
 
 and additional standard information
+
 ![ghelp_embed](https://raw.githubusercontent.com/NapoII/Discord_Rust_Team_bot/main/README_img/rust-help_embed.png)
 
 
 ### Server-Status <a name = "server"></a>
 
 The number of players of the specific server are displayed
-![server_status_channel_name](README_img\server_status_channel_name.png)
+
+![server_status_channel_name](https://raw.githubusercontent.com/NapoII/Discord_Rust_Team_Bot/main/README_img/server_status_channel_name.png)
 ![Online_Status](https://raw.githubusercontent.com/NapoII/Discord_Rust_Team_bot/main/README_img/Online_Status.png)
 
 Additional information about the server such as ip, map website, etc. is displayed.
+
 ![Server_status](https://raw.githubusercontent.com/NapoII/Discord_Rust_Team_bot/main/README_img/Server_status.png)
 
 
 ### Player Watch List <a name = "Player_Watch_List"></a>
 You can monitor certain players to see how long they are on the server, etc.
-![player_status](README_img\player_status.png)
 
-![player_status2](https://raw.githubusercontent.com/NapoII/Discord_Rust_Team_bot/main/README_img/player_status.png)
+![player_status](https://raw.githubusercontent.com/NapoII/Discord_Rust_Team_Bot/main/README_img/player_status.png)
+
 Or get notified if a certain group of players goes online or offline from the server.
-![player_status_sub](README_img\sub.gif)
+
+![player_status_sub](https://raw.githubusercontent.com/NapoII/Discord_Rust_Team_Bot/main/README_img/sub.gif)
 
 ### Cheak if more Teammates <a name = "Team_cheak"></a>
 You can use a steam ID or steam profile page url to see if any of his team mates are playing on the server.
-![player_status_sub](README_img\teack_check.gif)
+
+![player_status_sub](https://raw.githubusercontent.com/NapoII/Discord_Rust_Team_Bot/main/README_img/teack_check.gif)
 
 
 
@@ -77,11 +87,14 @@ You can use a steam ID or steam profile page url to see if any of his team mates
 
 3. Add the server_id to the config.ini file 
    `Discord_Rust_Team_bot\cfg\config.ini`
-    ![server_id](README_img\Server_id.gif)
+   
+    ![server_id](https://raw.githubusercontent.com/NapoII/Discord_Rust_Team_Bot/main/README_img/Server_id.gif)
+    
     You can ingonir the other settings for now. The bot will change them on its own
 
 4. Don't forget to let join your own Discord-bot to your Discord
-    ![bot](README_img\bot.gif)
+5. 
+    ![bot](https://raw.githubusercontent.com/NapoII/Discord_Rust_Team_Bot/main/README_img/bot.gif)
 
 5. Start the py bot for the first time and wait until it has created all channels and roles. (to avoid errors you can start the .py in admin mode) 
     `Discord_Rust_Team_bot\Discord_Rust_Team_bot.py`
@@ -90,7 +103,9 @@ You can use a steam ID or steam profile page url to see if any of his team mates
 
 7. change the server ID. Type `/change_server` in your Discord.
     You take the ID from battlemetrics: https://www.battlemetrics.com/servers/search
-    ![bot](README_img\server_id_first.gif)
+    
+    ![bot](https://raw.githubusercontent.com/NapoII/Discord_Rust_Team_Bot/main/README_img/server_id_first.gif)
+    
 8. ☕Now that the bot is ready for use, treat yourself to a cup of tea.☕
 
 
