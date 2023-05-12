@@ -24,7 +24,8 @@ guild_id = int(guild_id)
 
 guild = discord.Object(id=guild_id)
 
-rust_info_channel_id = read_config(config_dir, "Channel", "rust_info_channel_id")
+rust_info_channel_id = read_config(
+    config_dir, "Channel", "rust_info_channel_id")
 if rust_info_channel_id == None:
     rust_info_channel_id = 1
 rust_info_channel_id = int(rust_info_channel_id)
@@ -53,8 +54,10 @@ class Rust_Info(commands.Cog, ):
             `!rust fert {Number of Fertilizers}` - How much Scrap from x Fertilizer
             `!rust diesel {Number of Diesel}` - Giant Excavator / Mining Quarry - Calculator
             `!rust sulfur {Number of sulphur}` - How much boom from x suflur
-            `!rust raid` - Überfallkosten Liste
-            `!rust bind` - Must-have Extra Bind's"""
+            `!rust raid` - Raid costs list
+            `!rust bind` - Must-have Extra Bind's
+            `!rust elec` - Must have Electronic Circuits
+            """
             embed.add_field(name="All Commands:",
                             value=all_commands, inline=True)
             await rust_info_channel.send(embed=embed)
@@ -359,6 +362,17 @@ class Rust_Info(commands.Cog, ):
                             value="Better Control over your Hotbar.:\n`bind mousewheelup \"+slot4\"`\n`bind mousewheeldown \"+slot5\"`", inline=False)
             embed.add_field(
                 name="More", value="Steam Guide: [Must-have Extra Bind](https://steamcommunity.com/sharedfiles/filedetails/?id=2493654016)", inline=False)
+            await rust_info_channel.send(embed=embed)
+
+        if first.lower() == "elec":
+
+            embed = discord.Embed(title="Must have Electronic Circuits",
+                                  url="https://steamcommunity.com/sharedfiles/filedetails/?id=2375732344", description="a collection of my must-have Electronic Circuits for Rust!")
+            embed.set_author(name=f"@{ctx.author}",
+                             icon_url=f"{display_avatar}")
+            embed.set_thumbnail(
+                url="https://steamuserimages-a.akamaihd.net/ugc/2039609591868400626/3DDEBD3AAF15EE8C54E98FE9805530E56FCC247B/?imw=128&imh=128&ima=fit&impolicy=Letterbox&imcolor=%23000000&letterbox=true")
+            embed.add_field(name="Steam", value="Steam Guide: [Must-have Extra Bind](https://steamcommunity.com/sharedfiles/filedetails/?id=2375732344)", inline=False)
             await rust_info_channel.send(embed=embed)
 
 

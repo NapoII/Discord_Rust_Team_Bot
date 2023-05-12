@@ -13,6 +13,7 @@ Here is the code:
 import datetime
 import json
 import os
+import re
 import shutil
 import sys
 import time
@@ -26,8 +27,8 @@ import pyautogui
 import requests
 from discord import app_commands, ui
 from discord.ext import commands
-from logNow import log
-import re
+from logNow import *
+from bs4 import BeautifulSoup
 
 #    Prevents the code from being executed when the file is imported as a module.
 if __name__ == "__funktion__":
@@ -1025,6 +1026,22 @@ Example Usage:
 
 
 def scrape(url):
+    """
+This function takes a URL as input and tries to scrape the page using the requests module in Python. If successful, it returns the HTML content of the page, otherwise, it returns False.
+
+Args:
+url (str): The URL of the page to scrape.
+
+Returns:
+str or bool: The HTML content of the page as a string if the scraping is successful, otherwise, False.
+
+Example Usage:
+>>> html = scrape('https://www.example.com')
+>>> if html:
+... print(html)
+... else:
+... print('Scraping failed.')
+"""
     try:
         page = requests.get(url)
         return page.text
@@ -1035,7 +1052,20 @@ def scrape(url):
 
 from bs4 import BeautifulSoup
 
+
 def get_player_id_from_name(player_name, server_id):
+    """
+Args:
+player_name (str): The name of the player to search for.
+server_id (str): The ID of the server to search on.
+
+Returns:
+str: The ID of the player, if found, or None if the player is not found.
+
+Example Usage:
+>>> get_player_id_from_name('JohnDoe', '123456')
+https://www.battlemetrics.com/rcon/players/987654321
+"""
     log(f"get_player_id_from_name({player_name}, {server_id}) use url_end = lastSeen")
     url = f"https://www.battlemetrics.com/players?filter%5Bsearch%5D={player_name}&filter%5BplayerFlags%5D=&filter%5Bservers%5D={server_id}&sort=-lastSeen"
     
@@ -1088,6 +1118,23 @@ def get_player_id_from_name(player_name, server_id):
 
 
 def get_player_name(player_id):
+    """
+Args:
+    server_id (int): The ID of the Battlemetrics server to check.
+    steam_url (str): The Steam URL of the player to start checking from.
+
+Returns:
+    dict: A dictionary with the names of the players found, their Steam URL, and the server ID checked. Returns None if the initial Steam URL is invalid or if no players were found on the server.
+
+Example Usage:
+>>> team_cheacker(1234567, "https://steamcommunity.com/profiles/12345678901234567/")
+Team Detector Result:
+
+Name:                               SteamID:            Link:
+ExamplePlayer1                      12345678901234567  https://steamcommunity.com/profiles/12345678901234567/
+ExamplePlayer2                      23456789012345678  https://steamcommunity.com/profiles/23456789012345678/
+""" 
+
     url = f'https://api.battlemetrics.com/players/{player_id}'
     response = requests.get(url)
 
@@ -1100,7 +1147,28 @@ def get_player_name(player_id):
         return None
 
 
-def team_cheacker(server_id, steam_url):
+def team_checker(server_id, steam_url):
+    """
+This function checks a Rust server to determine if any players on the server are friends with the provided Steam account.
+
+Args:
+
+    server_id (int): The ID of the Rust server to check
+    steam_url (str): The Steam profile URL to check for friends on the Rust server
+
+Returns:
+
+    data (dict): A dictionary containing the names and Steam profile URLs of the friends found on the Rust server. If no friends are found, returns None.
+
+Example Usage:
+
+            team_cheacker(123456, 'https://steamcommunity.com/profiles/1234567890/')
+            Team Detector Result:
+            Name: SteamID: Link:
+            Player 1 1234567890 https://steamcommunity.com/profiles/1234567890/
+            Player 2 0987654321 https://steamcommunity.com/profiles/0987654321/
+            {'Player 1': {'steam_url': 'https://steamcommunity.com/profiles/1234567890/'}, 'Player 2': {'steam_url': 'https://steamcommunity.com/profiles/0987654321/'}}
+            """
     data = {}
     battlemetrics_url = f"https://www.battlemetrics.com/servers/rust/{server_id}"
 
@@ -1135,6 +1203,21 @@ def team_cheacker(server_id, steam_url):
     return data
 
 def get_battlemetrics_players(url):
+    """
+This function takes a 'url' string as input and returns a list of player names for a specified Battlemetrics game server.
+
+Args:
+- url (str): The URL of the Battlemetrics game server page for which to retrieve player information.
+
+Returns:
+- (list): A list of player names currently on the specified Battlemetrics game server. Returns an error message and exits the program if player information cannot be retrieved.
+
+Example Usage:
+>>> url = 'https://www.battlemetrics.com/servers/1234567'
+>>> get_battlemetrics_players(url)
+['Player1Name', 'Player2Name', 'Player3Name']
+"""
+
     
     content = scrape(url)
     if content == False:
@@ -1150,6 +1233,21 @@ def get_battlemetrics_players(url):
     return players
 
 def get_friend_list(url):
+    """
+This function takes a 'url' string as input and returns a dictionary containing the name, Steam ID, and list of friends for a user's Steam profile.
+
+Args:
+- url (str): The URL of the Steam profile page for which to retrieve friend information.
+
+Returns:
+- (dict): A dictionary containing the name, Steam ID, and list of friends for the specified Steam profile. Returns 'None' if the friend list cannot be retrieved.
+
+Example Usage:
+>>> url = 'https://steamcommunity.com/profiles/123456'
+>>> get_friend_list(url)
+{'name': 'PlayerName', 'steamId': '123456', 'friends': [('friend1_steamId', 'Friend1Name'), ('friend2_steamId', 'Friend2Name'), ('friend3_steamId', 'Friend3Name')]}
+"""
+
     if not 'friends' in url:
         url += '/friends'
 
@@ -1172,6 +1270,23 @@ def get_friend_list(url):
 
 
 def compare_players(battlemetricsPlayers, friendList):
+    """
+This function takes two lists, 'battlemetricsPlayers' and 'friendList', and returns a new list containing only the Steam IDs and names of players who are on both lists.
+
+Args:
+- battlemetricsPlayers (list): A list of player names currently on a game server.
+- friendList (list): A list of tuples containing Steam IDs and names for a user's friends.
+
+Returns:
+- (list): A list of tuples containing only the Steam IDs and names that are present in both 'battlemetricsPlayers' and 'friendList'.
+
+Example Usage:
+>>> battlemetricsPlayers = ['PlayerName1', 'PlayerName2', 'PlayerName3']
+>>> friendList = [(123456, 'PlayerName2'), (7891011, 'PlayerName3'), (12131415, 'PlayerName4')]
+>>> compare_players(battlemetricsPlayers, friendList)
+[(123456, 'PlayerName2'), (7891011, 'PlayerName3')]
+"""
+
     players = []
     for steamId, name in friendList:
         if name in battlemetricsPlayers:
@@ -1181,6 +1296,20 @@ def compare_players(battlemetricsPlayers, friendList):
 
 
 def generate_list_of_online_players(server_id):
+    """
+This function takes a 'server_id' integer as input and generates a dictionary containing the name and ID of each online player on that server.
+
+Args:
+- server_id (int): The server ID number for which to retrieve player information.
+
+Returns:
+- (dict): A dictionary containing the name and ID of each online player on the specified server.
+
+Example Usage:
+>>> generate_list_of_online_players(12345)
+{'PlayerName1': 'id1', 'PlayerName2': 'id2', 'PlayerName3': 'id3'}
+"""
+
 
     url = f'https://api.battlemetrics.com/servers/{server_id}?include=player'
 
@@ -1207,6 +1336,23 @@ def generate_list_of_online_players(server_id):
 
 
 def zip_data_steamname_and_bat_id (data_steam_name, data_battlemetrics_server_id_name):
+    """
+This function takes two dictionaries, 'data_steam_name' and 'data_battlemetrics_server_id_name', 
+as arguments and adds the server ID value to each corresponding dictionary item in 'data_steam_name'. 
+
+Args:
+- data_steam_name (dict): A dictionary containing Steam names as keys.
+- data_battlemetrics_server_id_name (dict): A dictionary containing server names and their corresponding IDs.
+
+Returns:
+- (dict): A dictionary containing Steam names and their corresponding server IDs, with the IDs added from 'data_battlemetrics_server_id_name'.
+
+Example Usage:
+>>> data_steam_name = {'SteamName1': {'value1': 1}, 'SteamName2': {'value2': 2}}
+>>> data_battlemetrics_server_id_name = {'SteamName1': 'ID1', 'SteamName2': 'ID2'}
+>>> zip_data_steamname_and_bat_id(data_steam_name, data_battlemetrics_server_id_name)
+{'SteamName1': {'value1': 1, 'ID': 'ID1'}, 'SteamName2': {'value2': 2, 'ID': 'ID2'}}
+    """
     data_steam_name_len = len(data_steam_name)
 
 

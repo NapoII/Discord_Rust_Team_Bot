@@ -1,6 +1,6 @@
 """Full Doku on: https://github.com/NapoII/Discord_Rust_Team_bot"
 -----------------------------------------------
-a send ebmbed to channel for the discord admin.
+Search for teams on the server and add them to the watchlist if necessary.
 ------------------------------------------------
 """
 
@@ -20,9 +20,9 @@ guild_id = int(read_config(config_dir, "Client", "guild_id"))
 guild = discord.Object(id=guild_id)
 
 file_path = os.path.dirname(sys.argv[0])
-file_path_Team_Checker = os.path.dirname(os.path.realpath(__file__))
+file_path_team_check = os.path.dirname(os.path.realpath(__file__))
 
-file_path_temp = os.path.join(file_path_Team_Checker, "temp")
+file_path_temp = os.path.join(file_path_team_check, "temp")
 file_path_temp = Folder_gen("temp", file_path_temp)
 
 file_path_Team_data = os.path.join(bot_folder, "cfg", "Team_data.json")
@@ -31,13 +31,13 @@ team_cheack_data_temp_dir = file_path_temp + "/" + \
     ((File_name_with_time("Team_cheack_data"))+".temp")
 
 
-class bot_team_checker(commands.Cog):
+class bot_team_check(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
 
     description = "detects teams in Rust"
 
-    @app_commands.command(name="team_checker", description=description)
+    @app_commands.command(name="team_check", description=description)
     @app_commands.describe(
         player_steam_url="The SteamID from a Player or his Steam URL",
     )
@@ -53,11 +53,13 @@ class bot_team_checker(commands.Cog):
 
         battlemetrics_server_id = read_config(
             config_dir, "Rust", "battlemetrics_server_id")
+        await interaction.response.send_message("One moment please. I am looking for the possible team members for this player.", ephemeral=True)
 
-        data_steam_name = team_cheacker(
+        data_steam_name = team_checker(
+            
             battlemetrics_server_id, player_steam_url)
         if data_steam_name == None:
-            embed = discord.Embed(title="Team Cheacker", url=player_steam_url,
+            embed = discord.Embed(title="Team Check", url=player_steam_url,
                                   description="No data found under this Steam URL.", color=0xff0006)
             await interaction.response.send_message(embed=embed, ephemeral=True)
         else:
@@ -74,10 +76,10 @@ class bot_team_checker(commands.Cog):
             team_player_data_len = len(team_player_data)
             if team_player_data_len == 1:
                 embed = discord.Embed(
-                    title="Team Cheacker", description="No info on a team maybe he's solo?", color=0x0080ff)
+                    title="Team Check", description="No info on a team maybe he's solo?", color=0x0080ff)
             else:
                 embed = discord.Embed(
-                    title="Team Cheacker", description=f"The team consists of {team_player_data_len} players.", color=0x0080ff)
+                    title="Team Check", description=f"The team consists of {team_player_data_len} players.", color=0x0080ff)
 
             x = -1
             offline = False
@@ -100,7 +102,7 @@ class bot_team_checker(commands.Cog):
                     break
 
             if offline == True:
-                embed = discord.Embed(title="Team Cheack", url=player_steam_url,
+                embed = discord.Embed(title="Team Check", url=player_steam_url,
                                       description="Player not found. maybe it's not online on the server right now?", color=0xff0006)
                 await interaction.response.send_message(embed=embed, ephemeral=True)
             else:
@@ -123,7 +125,8 @@ class bot_team_checker(commands.Cog):
                     thinking = self.bot.get_emoji(123456789)
                     embed = discord.Embed(
                         title="Select a team or create a new one", description=f"{thinking} Thinking...", color=discord.Color.blurple())
-                    msg = await interaction.channel.send(embed=embed, delete_after=10, )
+                    
+                    msg = await interaction.channel.send(embed=embed, delete_after=30, )
 
                     Team_list = Team_choice(file_path_Team_data)
                     Team_list_len = len(Team_list)
@@ -162,7 +165,7 @@ class bot_team_checker(commands.Cog):
                     if msg is not None:
                         await msg.edit(embed=embed, view=view)
                     else:
-                        await interaction.channel.send(embed=embed, delete_after=10, view=view)
+                        await interaction.channel.send(embed=embed, delete_after=30, view=view)
 
                 else:
                     self.confirm_Button = False
@@ -199,7 +202,7 @@ class modal_New_team(ui.Modal, title="New Team", ):
 
         elif view.value:
             self.confirm_Button = True
-            
+
             embed = discord.Embed(title=self.New_Team_name,
                                   description=self.New_team_note, color=0xc0c0c0)
 
@@ -264,4 +267,4 @@ class Confirm_say(discord.ui.View):
 
 
 async def setup(bot: commands.Bot):
-    await bot.add_cog(bot_team_checker(bot), guild=discord.Object(guild_id))
+    await bot.add_cog(bot_team_check(bot), guild=discord.Object(guild_id))

@@ -1,14 +1,3 @@
 {
-    "Teams": {
-        "aaa": {
-            "note": "bbb",
-            "embed_id": 1106315540886212708,
-            "Sub_Discord_ID_list": [],
-            "Last_Status": true,
-            "ThatsWutSheZed": {
-                "ID": "977065329",
-                "note": "https://steamcommunity.com/profiles/76561198048069955/"
-            }
-        }
-    }
+    "Teams": {}
 }

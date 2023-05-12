@@ -105,7 +105,7 @@ class MyBot(commands.Bot):
             "discord_cogs.help_command",
             "discord_cogs.Rust.server_stats",
             "discord_cogs.Rust.ChannelHoper",
-            "discord_cogs.Rust.Team_Checker",
+            "discord_cogs.Rust.team_check",
         ]
 
     async def setup_hook(self):
@@ -195,6 +195,25 @@ class MyBot(commands.Bot):
                 log(f"The channel {player_observation.name} was created.")
 
                 Rust_info = await guild.create_text_channel("💻 Rust_info", category=category_Rust)
+
+                embed = discord.Embed(title="#rust-info", color=0x8080ff)
+                embed.set_author(name=f"@{guild.name}",
+                                icon_url=f"https://i.imgur.com/sGX6nZz.png")
+                embed.set_thumbnail(url="https://i.imgur.com/sdr9twR.png")
+                all_commands = """`!rust help` - List of all commands
+                `!rust cctv` - List of all CCTV codes
+                `!rust pager` - List of all pager codes
+                `!rust cost` - Important prices
+                `!rust fert {Number of Fertilizers}` - How much Scrap from x Fertilizer
+                `!rust diesel {Number of Diesel}` - Giant Excavator / Mining Quarry - Calculator
+                `!rust sulfur {Number of sulphur}` - How much boom from x suflur
+                `!rust raid` - Raid costs list
+                `!rust bind` - Must-have Extra Bind's
+                `!rust elec` - Must have Electronic Circuits
+                """
+                embed.add_field(name="All Commands:",
+                                value=all_commands, inline=True)
+                await Rust_info.send(embed=embed)
 
                 rust_info_channel_id = Rust_info.id
                 rust_info_channel_name = Rust_info.name

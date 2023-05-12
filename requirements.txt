@@ -1,3 +1,9 @@
 logNow
 configparser
 discord
+asyncio
+discord
+pyautogui
+interactions
+numpy
+json

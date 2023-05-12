@@ -1,12 +1,10 @@
 """Full Doku on: https://github.com/NapoII/Discord_Rust_Team_bot"
 -----------------------------------------------
-Diese COG ist für Spielerkarten, um die letzte Aktiviti zu sehen.
-e.g. : 
-Wohnort ?
+This COG is for player cards to see the latest activiti.
 Team note: ?
-aktualisiert vor 7 Minuten
+updated 7 minutes ago
 FRED
-🔴 vor einem Monat
+🔴 one month ago
 ServerZeit: 223.61h
 note: Close by
 Player ID: 244928103
@@ -18,7 +16,7 @@ import requests
 from discord.ext import commands, tasks
 from discord.ui import Select, View
 from numpy import append
-import asyncio
+
 
 from util.__funktion__ import *
 
@@ -64,10 +62,12 @@ guild = discord.Object(id=guild_id)
 player_observation_channel_id = int(read_config(
     config_dir, "Channel", "player_observation_channel_id"))
 
-Rust_Bot_Channel_ID = read_config(config_dir, "Channel", "player_observation_channel_id")
+Rust_Bot_Channel_ID = read_config(
+    config_dir, "Channel", "player_observation_channel_id")
 if Rust_Bot_Channel_ID == None:
     Rust_Bot_Channel_ID = 1
 Rust_Bot_Channel_ID = int(Rust_Bot_Channel_ID)
+
 
 class New_player(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
@@ -82,24 +82,28 @@ class New_player(commands.Cog):
         self.player_name = player_name
         self.player_note = player_note
 
-        thinking = self.bot.get_emoji(123456789)  # replace with your thinking emoji ID
-        
+        # replace with your thinking emoji ID
+        thinking = self.bot.get_emoji(123456789)
 
         # Send the embed with the thinking animation
-        embed = discord.Embed(title="Adding player...", description=f"{thinking} Thinking...", color=discord.Color.blurple())
+        embed = discord.Embed(
+            title="Adding player...", description=f"{thinking} Thinking...", color=discord.Color.blurple())
         msg = await interaction.response.send_message(embed=embed, ephemeral=True, )
 
-        battlemetrics_server_id = read_config(config_dir, "Rust", "battlemetrics_server_id")
+        battlemetrics_server_id = read_config(
+            config_dir, "Rust", "battlemetrics_server_id")
 
         if "id-" in player_name:
             player_id = player_name.split("id:")[1]
 
         else:
-            player_id = get_player_id_from_name(player_name, battlemetrics_server_id)
+            player_id = get_player_id_from_name(
+                player_name, battlemetrics_server_id)
 
         if player_id == None:
             s_url = f"https://www.battlemetrics.com/players?filter%5Bsearch%5D={player_name}&filter%5BplayerFlags%5D=&filter%5Bservers%5D={battlemetrics_server_id}&sort=-lastSeen"
-            embed=discord.Embed(title=f"No search results with {player_name}", url=s_url, description="Try to find the player by yourself and add the ID to the next request with `id:{battlemetrics_player_id}`.", color=0xff0000)
+            embed = discord.Embed(title=f"No search results with {player_name}", url=s_url,
+                                  description="Try to find the player by yourself and add the ID to the next request with `id:{battlemetrics_player_id}`.", color=0xff0000)
             await interaction.response.send_message(embed=embed, ephemeral=True)
         else:
             player_id = int(player_id)
@@ -143,12 +147,12 @@ class New_player(commands.Cog):
             if player_online_status == False or player_online_status == "never_played":
                 if player_online_status == "never_played":
                     embed = discord.Embed(title=f"{Player_name}", url=f"https://www.battlemetrics.com/players/{player_id}",
-                                        description=("❌ | ID: "+str(player_id)), color=0xff0000)
+                                          description=("❌ | ID: "+str(player_id)), color=0xff0000)
                     value = f"❌ `Never played on that Server` ❌ | note: `{player_note}`"
                     embed.add_field(name=Player_name, value=value, inline=True)
                 else:
                     embed = discord.Embed(title=f"{Player_name}", url=f"https://www.battlemetrics.com/players/{player_id}",
-                                        description=("🔴 | ID: "+str(player_id)), color=0xff0000)
+                                          description=("🔴 | ID: "+str(player_id)), color=0xff0000)
                     embed.add_field(name="Last Seen",
                                     value=f"{player_lastSeen}", inline=True)
                     embed.add_field(
@@ -156,10 +160,11 @@ class New_player(commands.Cog):
                     embed.set_footer(text=f"Select team:")
             else:
                 embed = discord.Embed(title=f"{Player_name}", url=f"https://www.battlemetrics.com/players/{player_id}",
-                                    description=f"🟢 | ID: {player_id}", color=0xff8040)
+                                      description=f"🟢 | ID: {player_id}", color=0xff8040)
                 embed.add_field(name="Online since",
                                 value=f"{player_lastSeen}", inline=True)
-                embed.add_field(name="Note", value=f"{player_note}", inline=True)
+                embed.add_field(
+                    name="Note", value=f"{player_note}", inline=True)
                 embed.set_footer(text=f"Select team:")
 
             Team_list = Team_choice(file_path_Team_data)
@@ -204,16 +209,11 @@ class New_player(commands.Cog):
             select.callback = my_callback
             view = View()
             view.add_item(select)
-            
+
             if msg is not None:
                 await msg.edit(embed=embed, view=view)
             else:
-                await interaction.channel.send(embed=embed, delete_after=10, view=view)
-
-
-
-
-
+                await interaction.channel.send(embed=embed, delete_after=30, view=view)
 
 
 class Confirm_say(discord.ui.View):
@@ -250,7 +250,7 @@ class modal_New_team(ui.Modal, title="New Team",):
     log("modal_New_team: New_Team_name | New_team_note |")
 
     async def on_submit(self, interaction: discord.Interaction):
-        
+
         embed = discord.Embed(title=self.New_Team_name,
                               description=self.New_team_note, color=0xc0c0c0)
         view = Confirm_say()
@@ -275,7 +275,6 @@ class modal_New_team(ui.Modal, title="New Team",):
             Team_Card_embed_id = 0
             log(f'Confirmed... self.confirm_Button = {self.confirm_Button}')
 
-
             JSOn_data = open_JSOn_File(file_path_Team_data)
             JSOn_data = add_Team(JSOn_data, self.New_Team_name,
                                  self.New_team_note, Team_Card_embed_id)
@@ -286,7 +285,8 @@ class modal_New_team(ui.Modal, title="New Team",):
 
             # add_player(dict, team, name, id, note):
 
-            JSOn_data = add_player(JSOn_data, self.New_Team_name, player_name_str, player_id_int, player_note_str)
+            JSOn_data = add_player(
+                JSOn_data, self.New_Team_name, player_name_str, player_id_int, player_note_str)
 
             Fill_JSOn_File(file_path_Team_data, JSOn_data)
 
@@ -332,12 +332,13 @@ class modal_confrim_delt(ui.Modal, title="Clear Watchlist"):
                     break
                 #player_observation_channel_id = int(read_config(config_dir, "Channel", "player_observation_channel_id"))
                 try:
-                    player_observation_channel = interaction.client.get_channel(player_observation_channel_id)
+                    player_observation_channel = interaction.client.get_channel(
+                        player_observation_channel_id)
                     msg = await player_observation_channel.fetch_message(embed_ID_list[x])
                     await msg.delete()
-                    log (f"No msg delt","blue")
+                    log(f"No msg delt", "blue")
                 except:
-                    log (f"No msg to delt","blue")
+                    log(f"No msg to delt", "blue")
 
             dictionary = {"Teams": {}}
             Fill_JSOn_File(file_path_Team_data, dictionary)
@@ -485,7 +486,8 @@ class Delt_Team(commands.Cog):
                 JSOn_data = delt_Team(JSOn_data, Team_name)
                 Fill_JSOn_File(file_path_Team_data, JSOn_data)
 
-                player_observation_channel = interaction.client.get_channel(player_observation_channel_id)
+                player_observation_channel = interaction.client.get_channel(
+                    player_observation_channel_id)
                 log(f"msg delt: {embed_id}: Team embed ({Team_name})")
                 msg = await player_observation_channel.fetch_message(embed_id)
                 await msg.delete()
@@ -641,19 +643,23 @@ class Player_watch_loops(commands.Cog, commands.Bot):
                             await User.send(embed=embed)
 
             try:
-                player_observation_channel = self.bot.get_channel(player_observation_channel_id)
+                player_observation_channel = self.bot.get_channel(
+                    player_observation_channel_id)
                 msg = await player_observation_channel.fetch_message(Team_embed_id)
                 await msg.edit(embed=embed)
-                log(f"Discord: Edit Embed from Team [{Team_Name}] msg.id: [{msg.id}]")
+                log(
+                    f"Discord: Edit Embed from Team [{Team_Name}] msg.id: [{msg.id}]")
             except:
                 try:
                     JSOn_data = open_JSOn_File(file_path_Team_data)
-                    player_observation_channel = self.bot.get_channel(player_observation_channel_id)
+                    player_observation_channel = self.bot.get_channel(
+                        player_observation_channel_id)
                     Team_Card_embed = await player_observation_channel.send(embed=embed, view=Sub_button())
                     Team_Card_embed_id = (Team_Card_embed.id)
                     JSOn_data["Teams"][Team_Name]["embed_id"] = Team_Card_embed_id
                     Fill_JSOn_File(file_path_Team_data, JSOn_data)
-                    log(f"Discord: send new Embed from Team [{Team_Name}] msg.id: [{Team_Card_embed_id}]")
+                    log(
+                        f"Discord: send new Embed from Team [{Team_Name}] msg.id: [{Team_Card_embed_id}]")
                 except:
                     pass
 
