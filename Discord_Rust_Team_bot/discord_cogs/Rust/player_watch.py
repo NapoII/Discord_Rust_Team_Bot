@@ -746,10 +746,65 @@ class Sub_button(discord.ui.View,):
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
+class all_players(commands.Cog):
+    def __init__(self, bot: commands.Bot) -> None:
+        self.bot = bot
+
+    @app_commands.command(name="all_players", description="Show a list of all players who are online")
+    async def all_players_list_send(self, interaction: discord.Interaction):
+
+        battlemetrics_server_id = read_config(config_dir, "Rust", "battlemetrics_server_id")
+        data = get_all_online_player(battlemetrics_server_id)
+
+        data_len =(len(data))
+        
+        embed=discord.Embed(title=f"{data_len} Player Online")
+        player_observation_channel = await self.bot.fetch_channel(player_observation_channel_id)
+
+        data_len =(len(data))
+
+        str=""
+        x = -1
+        while True:
+            x = x + 1
+            if x == data_len:
+                break
+
+            name = list(data.keys())[x]
+            id = list(data.values())[x]
+            
+            str_ad = f"{name} | `{int(id.pop())}`\n"
+            str = str + str_ad
+        await interaction.response.send_message(f"<#{player_observation_channel_id}> The list will be automatically deleted in 60 sec.", ephemeral=True)
+        """        time_stemp = time.time()
+        Discord_time_stemp = discord_time_convert(int(time_stemp))
+        embed.add_field(name=f"The list was created", value=f"{Discord_time_stemp}",inline=False)
+        embed.add_field(name=f"Name / battlemetrics ID", value=f"{str}",inline=False)
+        await player_observation_channel.send(embed=embed, delete_after= 60)"""
+
+        import textwrap
+
+        # Überprüfen, ob die Länge des Strings größer als 1000 ist
+        if len(str) > 1000:
+            # Aufteilen des Strings in kleinere Stücke mit textwrap
+            wrapped_parts = textwrap.wrap(str, width=1000, replace_whitespace=False)
+
+            # Hinzufügen jedes Teils als neues Feld im Embed
+            for i, part in enumerate(wrapped_parts):
+                embed.add_field(name=f"Name / battlemetrics ID (Teil {i+1})", value=f"{part}", inline=False)
+        else:
+            # Hinzufügen des gesamten Strings als ein einzelnes Feld im Embed
+            embed.add_field(name=f"Name / battlemetrics ID", value=f"{str}", inline=False)
+
+        # Senden des Embeds
+        await player_observation_channel.send(embed=embed, delete_after=60)
+
+
 async def setup(bot: commands.Bot):
     await bot.add_cog(New_player(bot), guild=discord.Object(guild_id))
     await bot.add_cog(clear_watchlist(bot), guild=discord.Object(guild_id))
     await bot.add_cog(Player_watch_loops(bot), guild=discord.Object(guild_id))
     await bot.add_cog(Delt_player(bot), guild=discord.Object(guild_id))
-    await bot.add_cog(Delt_Team(bot), guild=discord.Object(guild_id))
+    await bot.add_cog(all_players(bot), guild=discord.Object(guild_id))
+
     bot.add_view(Sub_button())

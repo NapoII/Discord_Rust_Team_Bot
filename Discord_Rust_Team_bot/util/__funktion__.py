@@ -101,7 +101,7 @@ Example Usage:
         pass
     option = str(option)
     config.set(section, Key, option)  # Updating existing entry
-    with open(config_dir, 'w',encoding='utf-8') as configfile:
+    with open(config_dir, 'w', encoding='utf-8') as configfile:
         config.write(configfile)
     print(
         f"\nChange settings -> {config_dir}\n[{section}]\n{Key}) = {option}\n")
@@ -568,7 +568,7 @@ Example Usage:
 'This is some content.'
 """
     file1 = open(
-        dir, "a", encoding="utf-8") 
+        dir, "a", encoding="utf-8")
     log(f"Temp_Datei [{dir}] is described and saved...\n")
     file1.write(str(toFill))
     file1.close()
@@ -1050,9 +1050,6 @@ Example Usage:
         return False
 
 
-from bs4 import BeautifulSoup
-
-
 def get_player_id_from_name(player_name, server_id):
     """
 Args:
@@ -1068,7 +1065,7 @@ https://www.battlemetrics.com/rcon/players/987654321
 """
     log(f"get_player_id_from_name({player_name}, {server_id}) use url_end = lastSeen")
     url = f"https://www.battlemetrics.com/players?filter%5Bsearch%5D={player_name}&filter%5BplayerFlags%5D=&filter%5Bservers%5D={server_id}&sort=-lastSeen"
-    
+
     html = scrape(url)
     soup = BeautifulSoup(html, 'html.parser')
 
@@ -1083,11 +1080,11 @@ https://www.battlemetrics.com/rcon/players/987654321
         result = href.split('/')[-1]
 
         bat_name = get_player_name(result)
-        print(f"bat_name= {bat_name} player_name= {player_name}" )
+        print(f"bat_name= {bat_name} player_name= {player_name}")
         if bat_name == player_name:
             return result
         else:
-            
+
             log(f"get_player_id_from_name({player_name}, {server_id}) use url_end = Score")
             url = f"https://www.battlemetrics.com/players?filter%5Bsearch%5D={player_name}&filter%5BplayerFlags%5D=&filter%5Bservers%5D={server_id}&sort=score"
             html = scrape(url)
@@ -1104,11 +1101,12 @@ https://www.battlemetrics.com/rcon/players/987654321
                 result = href.split('/')[-1]
 
                 bat_name = get_player_name(result)
-                print(f"bat_name= {bat_name} player_name= {player_name}" )
+                print(f"bat_name= {bat_name} player_name= {player_name}")
                 if bat_name == player_name:
                     return result
                 else:
-                    log(f" get_player_id_from_name({player_name}, {server_id}) The item was not found.")
+                    log(
+                        f" get_player_id_from_name({player_name}, {server_id}) The item was not found.")
                     return None
 
     else:
@@ -1133,7 +1131,7 @@ Team Detector Result:
 Name:                               SteamID:            Link:
 ExamplePlayer1                      12345678901234567  https://steamcommunity.com/profiles/12345678901234567/
 ExamplePlayer2                      23456789012345678  https://steamcommunity.com/profiles/23456789012345678/
-""" 
+"""
 
     url = f'https://api.battlemetrics.com/players/{player_id}'
     response = requests.get(url)
@@ -1177,8 +1175,9 @@ Example Usage:
     if initialFriendList == None:
         return None
 
-    friends = { initialFriendList['steamId']: initialFriendList['name']}
-    leftToCheck = compare_players(battlemetricsPlayers, initialFriendList['friends'])
+    friends = {initialFriendList['steamId']: initialFriendList['name']}
+    leftToCheck = compare_players(
+        battlemetricsPlayers, initialFriendList['friends'])
 
     while True:
         if len(leftToCheck) == 0:
@@ -1186,7 +1185,8 @@ Example Usage:
 
         newLeft = []
         for steamId, name in leftToCheck:
-            friendList = get_friend_list(f'https://steamcommunity.com/profiles/{steamId}/friends')
+            friendList = get_friend_list(
+                f'https://steamcommunity.com/profiles/{steamId}/friends')
             friends[friendList['steamId']] = friendList['name']
             for steamIdC, nameC in compare_players(battlemetricsPlayers, friendList['friends']):
                 if steamIdC not in friends and not any(steamIdC in x for x in newLeft):
@@ -1194,13 +1194,13 @@ Example Usage:
 
         leftToCheck = newLeft
 
-
     print('Team Detector Result:\n')
     print('Name:'.ljust(34) + 'SteamID:'.ljust(19) + 'Link:')
 
     for steamId, name in friends.items():
         data[name] = {"steam_url": steam_url}
     return data
+
 
 def get_battlemetrics_players(url):
     """
@@ -1218,7 +1218,6 @@ Example Usage:
 ['Player1Name', 'Player2Name', 'Player3Name']
 """
 
-    
     content = scrape(url)
     if content == False:
         print('Could not scrape Battlemetrics Server Page')
@@ -1231,6 +1230,7 @@ Example Usage:
         exit()
 
     return players
+
 
 def get_friend_list(url):
     """
@@ -1262,7 +1262,7 @@ Example Usage:
     try:
         steamId = re.findall(regex, content)[0]
         regex = r'data-steamid="(.+?)".*?<div class="friend_block_content">(.+?)<br>'
-        friends = re.findall(regex, content, re.MULTILINE|re.S)
+        friends = re.findall(regex, content, re.MULTILINE | re.S)
 
         return {"name": name, "steamId": steamId, "friends": friends}
     except:
@@ -1310,7 +1310,6 @@ Example Usage:
 {'PlayerName1': 'id1', 'PlayerName2': 'id2', 'PlayerName3': 'id3'}
 """
 
-
     url = f'https://api.battlemetrics.com/servers/{server_id}?include=player'
 
     # Send the GET request with the specified parameters
@@ -1330,12 +1329,12 @@ Example Usage:
         x = x + 1
 
         name = included[x]["attributes"]["name"]
-        id =  included[x]["attributes"]["id"]
+        id = included[x]["attributes"]["id"]
         data[name] = id
     return data
 
 
-def zip_data_steamname_and_bat_id (data_steam_name, data_battlemetrics_server_id_name):
+def zip_data_steamname_and_bat_id(data_steam_name, data_battlemetrics_server_id_name):
     """
 This function takes two dictionaries, 'data_steam_name' and 'data_battlemetrics_server_id_name', 
 as arguments and adds the server ID value to each corresponding dictionary item in 'data_steam_name'. 
@@ -1355,17 +1354,45 @@ Example Usage:
     """
     data_steam_name_len = len(data_steam_name)
 
-
     data_steam_only_name = list(data_steam_name.keys())
     print(data_steam_name)
     x = -1
     while True:
         if x == (data_steam_name_len)-1:
             break
-        x = x +1
+        x = x + 1
 
         name_steam = data_steam_only_name[x]
         if name_steam in data_battlemetrics_server_id_name:
             data_steam_name[name_steam]["ID"] = data_battlemetrics_server_id_name[name_steam]
-    
+
     return(data_steam_name)
+
+
+def get_all_online_player(server_id):
+    url = f'https://api.battlemetrics.com/servers/{server_id}?include=player'
+
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        data = response.json()
+    else:
+        return None
+
+    full_online_player_list = {}
+    data = data["included"]
+
+    data_len = len(data)
+
+    x = -1
+    while True:
+        x = x + 1
+        if x == data_len:
+            break
+
+        name = data[x]["attributes"]["name"]
+        id = data[x]["attributes"]["id"]
+        full_online_player_list[name] = {id}
+
+    full_online_player_list = dict(sorted(full_online_player_list.items()))
+    return(full_online_player_list)
