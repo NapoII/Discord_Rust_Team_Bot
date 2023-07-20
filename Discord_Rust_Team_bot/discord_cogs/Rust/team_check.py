@@ -128,19 +128,19 @@ class bot_team_check(commands.Cog):
                     
                     msg = await interaction.channel.send(embed=embed, delete_after=30, )
 
-                    Team_list = Team_choice(file_path_Team_data)
+                    Team_list, Team_Note_list = Team_choice(file_path_Team_data)
                     Team_list_len = len(Team_list)
+                    print(Team_list_len)
 
                     x = -1
-                    options = [discord.SelectOption(
-                        label=f"🆕Create a new team.🆕", description=f"Add a new team for players."),]
+                    options = [discord.SelectOption(label=f"🆕Create a new team.🆕", description=f"Add a new team for players."),]
                     while True:
                         x = x + 1
                         if x == Team_list_len:
                             break
                         try:
-                            team_name,  team_note = Team_list[x]
-
+                            team_name = Team_list[x]
+                            team_note = Team_Note_list[x]
                             options.append(discord.SelectOption(
                                 label=f"{team_name}", description=f"{team_note}"))
                         except:

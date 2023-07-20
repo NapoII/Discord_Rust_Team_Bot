@@ -64,7 +64,7 @@ class loops(commands.Cog, commands.Bot):
         time_stemp = time.time()
         Discord_time_stemp = discord_time_convert(int(time_stemp))
 
-        Server_ip_text = f"```client.connect {server_ip}:{server_port}```\nsteam://connect/{server_ip}:{server_port}\n battlemetricsID: `{server_id}` updated {Discord_time_stemp}"
+        Server_ip_text = f"```client.connect {server_ip}:{server_port}``````steam://connect/{server_ip}:{server_port}```\n battlemetricsID: `{server_id}` updated {Discord_time_stemp}"
         activity_text = f"Online: {players}/{maxPlayers}"
 
         await self.bot.change_presence(activity=discord.Game(activity_text))

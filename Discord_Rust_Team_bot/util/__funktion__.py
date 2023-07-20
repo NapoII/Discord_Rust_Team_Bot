@@ -295,6 +295,8 @@ def discord_time_convert(time):
     Args:
         time (int): A Unix timestamp to convert to Discord time format.
 
+
+
     Returns:
         - discord_time (str): A string representing the input timestamp in Discord time format.
 
@@ -1396,3 +1398,26 @@ def get_all_online_player(server_id):
 
     full_online_player_list = dict(sorted(full_online_player_list.items()))
     return(full_online_player_list)
+
+
+def contains_only_numbers(string):
+    """
+    Check if a string consists only of numbers.
+
+    Args:
+        string (str): The input string to be checked.
+
+    Returns:
+        bool: True if the string consists only of numbers, False otherwise.
+
+    Example Usage:
+        >>> contains_only_numbers("12345")
+        True
+
+        >>> contains_only_numbers("abc123")
+        False
+    """
+    if string.isdigit():
+        return True
+    else:
+        return False

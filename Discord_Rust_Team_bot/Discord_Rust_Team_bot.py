@@ -37,9 +37,11 @@ file_path = os.path.dirname(sys.argv[0])
 #file_path_Work_Folder = file_path + "/Work_Folder/"
 
 
-Bot_Path = os.path.abspath(sys.argv[0])
-config_dir = os.path.join(file_path, "cfg", "config.ini")
-token_config_dir = os.path.join(file_path, "cfg", "token.ini")
+Bot_Path = os.path.normpath(os.path.abspath(sys.argv[0]))
+print(Bot_Path)
+config_dir = os.path.normpath(os.path.join(file_path, "cfg", "config.ini"))
+print(config_dir)
+token_config_dir = os.path.normpath(os.path.join(file_path, "cfg", "token.ini"))
 log("Bot_Path: ["+str(Bot_Path) + "]\n")
 
 ################################################################################################################################

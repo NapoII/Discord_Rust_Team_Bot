@@ -75,7 +75,7 @@ class New_player(commands.Cog):
 
     @app_commands.command(name="add_player", description="Adds players to the watchlist.")
     @app_commands.describe(
-        player_name="Rust Player Name or id with id:{player_id}",
+        player_name="Rust Player_name or Steam_id",
         player_note="Note for the player.",
     )
     async def choise_team(self, interaction: discord.Interaction, player_name: str, player_note: str):
@@ -93,9 +93,9 @@ class New_player(commands.Cog):
         battlemetrics_server_id = read_config(
             config_dir, "Rust", "battlemetrics_server_id")
 
-        if "id-" in player_name:
-            player_id = player_name.split("id:")[1]
-
+        if contains_only_numbers(player_name) == True:
+            player_id = player_name
+   
         else:
             player_id = get_player_id_from_name(
                 player_name, battlemetrics_server_id)
@@ -104,7 +104,7 @@ class New_player(commands.Cog):
             s_url = f"https://www.battlemetrics.com/players?filter%5Bsearch%5D={player_name}&filter%5BplayerFlags%5D=&filter%5Bservers%5D={battlemetrics_server_id}&sort=-lastSeen"
             embed = discord.Embed(title=f"No search results with {player_name}", url=s_url,
                                   description="Try to find the player by yourself and add the ID to the next request with `id:{battlemetrics_player_id}`.", color=0xff0000)
-            await interaction.response.send_message(embed=embed, ephemeral=True)
+            await interaction.channel.send(embed=embed, delete_after= 20)
         else:
             player_id = int(player_id)
             create_and_fill_temp_bridge(player_id, player_id_temp_dir)
@@ -167,19 +167,20 @@ class New_player(commands.Cog):
                     name="Note", value=f"{player_note}", inline=True)
                 embed.set_footer(text=f"Select team:")
 
-            Team_list = Team_choice(file_path_Team_data)
+            Team_list, Team_Note_list = Team_choice(file_path_Team_data)
+            print(f"-------------------------------------------------> {Team_list}")
             Team_list_len = len(Team_list)
+            print(Team_list_len)
 
             x = -1
-            options = [discord.SelectOption(
-                label=f"🆕Create a new team.🆕", description=f"Add a new team for players."),]
+            options = [discord.SelectOption(label=f"🆕Create a new team.🆕", description=f"Add a new team for players."),]
             while True:
                 x = x + 1
                 if x == Team_list_len:
                     break
                 try:
-                    team_name,  team_note = Team_list[x]
-
+                    team_name = Team_list[x]
+                    team_note = Team_Note_list[x]
                     options.append(discord.SelectOption(
                         label=f"{team_name}", description=f"{team_note}"))
                 except:
@@ -772,10 +773,19 @@ class all_players(commands.Cog):
 
             name = list(data.keys())[x]
             id = list(data.values())[x]
-            
-            str_ad = f"{name} | `{int(id.pop())}`\n"
+            Player_id = int(id.pop())
+            Player_Bat_url = f"https://www.battlemetrics.com/players/{Player_id}"
+
+            id_str = f"[{Player_id}]({Player_Bat_url})"
+            id_str =f"`{Player_id}`"
+
+            str_ad = f"{name} | {id_str}\n"
             str = str + str_ad
+
+        print(len(str))
+
         await interaction.response.send_message(f"<#{player_observation_channel_id}> The list will be automatically deleted in 60 sec.", ephemeral=True)
+        
         """        time_stemp = time.time()
         Discord_time_stemp = discord_time_convert(int(time_stemp))
         embed.add_field(name=f"The list was created", value=f"{Discord_time_stemp}",inline=False)
