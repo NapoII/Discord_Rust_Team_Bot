@@ -142,7 +142,7 @@ class MyBot(commands.Bot):
                     guild.roles, name=Admin_role_name)
 
             Rust_role_name = "Rust Ultras"
-            Rust_role_colour = discord.Colour.red()
+            Rust_role_colour = discord.Colour.from_str("ffffff")
             # Check whether the role already exists
             existing_role = discord.utils.get(guild.roles, name=Rust_role_name)
 
@@ -167,8 +167,8 @@ class MyBot(commands.Bot):
                 log(f"The category {category_Rust.name} already exists.")
 
             else:
-                overwrites = {guild.default_role: discord.PermissionOverwrite(read_messages=False), Rust_role: discord.PermissionOverwrite(
-                    read_messages=True, send_messages=True, connect=True, speak=True), guild.me: discord.PermissionOverwrite(manage_channels=True)}
+                overwrites = {guild.default_role: discord.PermissionOverwrite(read_messages=False),
+                              Rust_role: discord.PermissionOverwrite(read_messages=True, send_messages=True, connect=True, speak=True), guild.me: discord.PermissionOverwrite(manage_channels=True)}
 
                 log(
                     f"The category {category_name} does not yet exist and will now be created")

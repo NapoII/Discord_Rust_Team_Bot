@@ -181,8 +181,7 @@ class New_player(commands.Cog):
                 try:
                     team_name = Team_list[x]
                     team_note = Team_Note_list[x]
-                    options.append(discord.SelectOption(
-                        label=f"{team_name}", description=f"{team_note}"))
+                    options.append(discord.SelectOption(label=f"{team_name}", description=f"{team_note}"))
                 except:
                     pass
             select = Select(options=options)

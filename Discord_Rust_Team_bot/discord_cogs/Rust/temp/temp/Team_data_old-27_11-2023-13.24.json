@@ -1,0 +1,62 @@
+{
+    "Teams": {
+        "Main": {
+            "note": "Lets go !",
+            "embed_id": 1170118669502783658,
+            "Sub_Discord_ID_list": [
+                189025602236448778
+            ],
+            "Last_Status": false,
+            "Napo_II": {
+                "ID": "63483374",
+                "note": "Napo"
+            },
+            "Tantal": {
+                "ID": "160228761",
+                "note": "Tantal"
+            }
+        },
+        "Snow hate Team": {
+            "note": "mby V19",
+            "embed_id": 1170119687753965679,
+            "Sub_Discord_ID_list": [
+                189025602236448778
+            ],
+            "Last_Status": false,
+            "stooooopid": {
+                "ID": "974780",
+                "note": "Sus"
+            },
+            "V0rza": {
+                "ID": "893635885",
+                "note": "muss nicht im selben team sein kann neuer sein im snow"
+            }
+        },
+        "V6 HQM q": {
+            "note": "Low bobs",
+            "embed_id": 1170123971778322452,
+            "Sub_Discord_ID_list": [
+                189025602236448778
+            ],
+            "Last_Status": false,
+            "KappaCcino": {
+                "ID": "2861537",
+                "note": "HQM Q"
+            },
+            "Quentino": {
+                "ID": "74554702",
+                "note": "Russ"
+            }
+        },
+        "HQM Team 2": {
+            "note": "is ein noob",
+            "embed_id": 1170211058158424224,
+            "Sub_Discord_ID_list": [],
+            "Last_Status": false,
+            "Shooter_05": {
+                "ID": "937592838",
+                "note": "life at hmq new team  is a noob"
+            }
+        }
+    }
+}

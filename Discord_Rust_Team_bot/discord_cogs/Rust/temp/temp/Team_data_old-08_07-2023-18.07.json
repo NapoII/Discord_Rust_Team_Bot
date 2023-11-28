@@ -1,0 +1,46 @@
+{
+    "Teams": {
+        "Contra Clan": {
+            "note": "apsel.ws",
+            "embed_id": 1107426674401890326,
+            "Sub_Discord_ID_list": [],
+            "Last_Status": true,
+            "Napo_II": {
+                "ID": "63483374",
+                "note": "heli"
+            },
+            "wudY": {
+                "ID": "961575142",
+                "note": "no heli"
+            }
+        },
+        "Door Camper": {
+            "note": "keine ahung wo er wohnt",
+            "embed_id": 1107430263463616553,
+            "Sub_Discord_ID_list": [
+                189025602236448778
+            ],
+            "Last_Status": false,
+            "\u0412\u0430\u0444\u043b\u044e \u0440\u0443\u0441\u0441\u043a\u0438\u0445": {
+                "ID": "1145677570",
+                "note": "close by | nervt"
+            }
+        },
+        "Try to raid us": {
+            "note": "wohnort ?",
+            "embed_id": 1107743670238707773,
+            "Sub_Discord_ID_list": [
+                189025602236448778
+            ],
+            "Last_Status": false,
+            "Kurt": {
+                "ID": "141770143",
+                "note": "Spast"
+            },
+            "Mydachyo": {
+                "ID": "993105078",
+                "note": "spast 2"
+            }
+        }
+    }
+}

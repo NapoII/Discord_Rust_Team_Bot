@@ -1,3 +1,28 @@
 {
-    "Teams": {}
+    "Teams": {
+        "HUSO": {
+            "note": "Muss weg",
+            "embed_id": 1178673116461940766,
+            "Sub_Discord_ID_list": [
+                189025602236448778
+            ],
+            "Last_Status": false,
+            "Nigel Thornberry": {
+                "ID": "350171196",
+                "note": "basdart"
+            }
+        },
+        "Sulfur q": {
+            "note": "not nice",
+            "embed_id": 1178795446425096244,
+            "Sub_Discord_ID_list": [
+                189025602236448778
+            ],
+            "Last_Status": true,
+            "Genki": {
+                "ID": "919987589",
+                "note": "Sulfur q"
+            }
+        }
+    }
 }
