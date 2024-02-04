@@ -1,3 +1,6 @@
+attention some API have an update and the bot have a big bug now I will fix it in the next few days, if you do not use it, write me, I give you the dev version SORRY give me time and this bot is on the status of sterioids !!!
+- 04.02.2024
+
 [![github/NapoII](https://raw.githubusercontent.com/NapoII/Discord_Rust_Team_bot/main/README_img/Readme_top.png)](https://github.com/NapoII)
 
 # Discord_Rust_Team_bot
