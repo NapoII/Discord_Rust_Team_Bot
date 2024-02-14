@@ -85,7 +85,7 @@ When the bot is started for the first time, it will create the necessary channel
 Feel free to show your appreciation by treating me to a virtual coffee. Your support means a lot and keeps the creative coding vibes going! 🚀
 
 <div style="text-align:center;">
-    <a href="https://ko-fi.com/napo_ii"><img src="/README_img/kofi.gif" alt="Buy me a coffee" width="200" height="auto"></a>
+    <a href="https://ko-fi.com/napo_ii"><img src="README_img/kofi.gif" alt="Buy me a coffee" width="200" height="auto"></a>
 </div>
 
 ## 📚 LICENSE <a name = "LICENSE"></a>

@@ -1,0 +1,43 @@
+[
+    {
+        "command": "```!rust help```",
+        "description": "List of all commands"
+    },
+    {
+        "command": "```!rust cctv```",
+        "description": "List of all CCTV codes"
+    },
+    {
+        "command": "```!rust pager```",
+        "description": "List of all pager codes"
+    },
+    {
+        "command": "```!rust cost```",
+        "description": "Important prices"
+    },
+    {
+        "command": "```!rust fert {Number of Fertilizers}```",
+        "description": "How much Scrap from x Fertilizer"
+    },
+    {
+        "command": "```!rust diesel {Number of Diesel}```",
+        "description": "Giant Excavator / Mining Quarry - Calculator"
+    },
+    {
+        "command": "```!rust sulfur {Number of sulphur}```",
+        "description": "How much boom from x suflur"
+    },
+    {
+        "command": "```!rust raid```",
+        "description": "Raid costs list"
+    },
+    {
+        "command": "```!rust bind```",
+        "description": "Must-have Extra Bind's"
+    },
+    {
+        "command": "```!rust elec```",
+        "description": "Must have Electronic Circuits"
+    }
+    
+]

@@ -1,0 +1,73 @@
+{
+  "Autorun": {
+    "description": "Press Y and you Run without pressing W",
+    "bind": "Y",
+    "action": "forward;sprint"
+  },
+  "Auto Bandage Craft": {
+    "description": "Press C and you make yourself some bandages in a fight",
+    "bind": "C",
+    "action": "craft.add -2072273936 1"
+  },
+  "Combat log": {
+    "description": "Open the combat log in the Console",
+    "bind": "F1",
+    "action": "consoletoggle;combatlog"
+  },
+  "Combat log filter: only your dmg": {
+    "description": "Show only the damage you deal",
+    "bind": "F2",
+    "action": "consoletoggle;combatlog_outgoing"
+  },
+  "Suicide": {
+    "description": "Just Hotkey the Kill Command in the Console (Press END for Self kill)",
+    "bind": "End",
+    "action": "kill"
+  },
+  "AutoMine bind": {
+    "description": "Automatically use the attack action in conjunction with crouch",
+    "bind": "M",
+    "action": "attack;duck"
+  },
+  "Automatically heal": {
+    "description": "Automatically use bandage or syringe in slot 6",
+    "bind": "T",
+    "action": "+slot6;+attack"
+  },
+  "Fast Switch to your Slot 4": {
+    "description": "Better Control over your Hot bar",
+    "bind": "MouseWheelUp",
+    "action": "+slot4"
+  },
+  "Fast Switch to your Slot 5": {
+    "description": "Better Control over your Hot bar",
+    "bind": "MouseWheelDown",
+    "action": "+slot5"
+  },
+  "Show Pop of the Server": {
+    "description": "Not on every server, only on community server",
+    "bind": "F10",
+    "action": "teamsay \"!pop\""
+  },
+  "Sound to minimum": {
+    "description": "Reduces Game sound to minimum (for Boat driving, Recycling, Minicopter)",
+    "bind": "M",
+    "action": "audio.master 0.1"
+  },
+  "Sets Gamesounds back to normal": {
+    "description": "Sets Gamesounds back to normal",
+    "bind": "N",
+    "action": "audio.master 1"
+  },
+  "Memory leak fix": {
+    "description": "Press k to clear the memory to fix some FPS problems",
+    "bind": "K",
+    "action": "gc.collect"
+  },
+  "Noclip for build server": {
+    "description": "Press h to fly only with admin right",
+    "bind": "H",
+    "action": "noclip"
+  }
+}
+  

@@ -1,0 +1,65 @@
+{
+    "🛩️ Airfield 🛩️": {
+        "1": "AIRFIELDHELIPAD"
+    },
+    "🏴‍☠️ Bandit Camp 🏴‍☠️": {
+        "1": "CASINO",
+        "2": "TOWNWEAPONS"
+    },
+    "🏰 Dome 🏰": {
+        "1": "DOME1",
+        "2": "DOMETOPS"
+    },
+    "🏗️ Large Oil Rig 🏗️": {
+        "1": "OILRIG2HELI",
+        "2": "OILRIG2DOCK",
+        "3": "OILRIG2EXHAUST",
+        "4": "OILRIG2L1",
+        "5": "OILRIG2L2",
+        "6": "OILRIG2L3A",
+        "7": "OILRIG2L3B",
+        "8": "OILRIG2L4",
+        "9": "OILRIG2L5",
+        "10": "OILRIG2L6A",
+        "11": "OILRIG2L6B",
+        "12": "OILRIG2L6C",
+        "13": "OILRIG2L6D"
+    },
+    "☢️ Nuclear Missile Silo": {
+        "1": "SILOEXIT1",
+        "2": "SILOEXIT2",
+        "3": "SILOMISSILE",
+        "4": "SILOSHIPPING",
+        "5": "SILOTOWER"
+    },
+    "🏡 Outpost 🏡": {
+        "1": "COMPOUNDSTREET",
+        "2": "COMPOUNDMUSIC",
+        "3": "COMPOUNDCRUDE",
+        "4": "COMPOUNDCHILL"
+    },
+    "🏗️ Small Oil Rig 🏗️": {
+        "1": "OILRIG1HELI",
+        "2": "OILRIG1DOCK",
+        "3": "OILRIG1EXHAUST",
+        "4": "OILRIG1L1",
+        "5": "OILRIG1L2",
+        "6": "OILRIG1L3",
+        "7": "OILRIG1L4"
+    },
+    "🌊 Underwater_Labs 🌊": {
+        "1": "AUXPOWER****",
+        "2": "BRIG****",
+        "3": "CANTINA****",
+        "4": "CAPTAINQUARTER****",
+        "5": "CLASSIFIED****",
+        "6": "CREWQUARTERS****",
+        "7": "HALLWAY****",
+        "8": "INFIRMARY****",
+        "9": "LAB****",
+        "10": "LOCKERROOM****",
+        "11": "OPERATIONS****",
+        "12": "SECURITYHALL****",
+        "13": "TECHCABINET****"
+    }
+}

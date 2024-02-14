@@ -1,0 +1,18 @@
+[
+    {
+        "command": "```/vc_help```",
+        "description": "Show all voice channel commands"
+    },
+    {
+        "command": "```/vc_rename {new_channel_name}```",
+        "description": "Rename the Voice Channel"
+    },
+    {
+        "command": "```/vc_limit {new_limit}```",
+        "description": "Set the maximum number of users."
+    },
+    {
+        "command": "```/vc_stay```",
+        "description": "Switch the status whether the server may be deleted after leaving."
+    }
+]

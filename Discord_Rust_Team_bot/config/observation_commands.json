@@ -1,0 +1,30 @@
+[
+    {
+        "command": "```/change_server {server_id}```",
+        "description": "Change Rust server. Use Battlemetrics.com to determine the server ID and register with /change_server."
+    }, 
+    {
+        "command": "```/all_players```",
+        "description": "Get a list of all players from the Rust server that are currently online with battelmatrics id"
+    }, 
+    {
+        "command": "```/add_player {player_name} {player_note}```",
+        "description": "Add a new player. Use Battlemetrics.com to find out the player ID and enter /change_server. Add a note to the player. Now, if necessary, create a new team or assign it to the new player in an existing team via the menu."
+    },
+    {
+        "command": "```/del_player```",
+        "description": "Remove player. Select a player from the list to remove him/her."
+    },
+    {
+        "command": "```/del_team```",
+        "description": "Remove team. Select team from the list to remove it."
+    },
+    {
+        "command": "```/clear_watchlist```",
+        "description": "Clear watchlist. Attention removes all players and all teams irrevocably."
+    },
+    {
+        "command": "```/team_check {player_steam_url}```",
+        "description": "Team check. Checks a player for possible team members on the server using their steam ID."
+    }
+]
