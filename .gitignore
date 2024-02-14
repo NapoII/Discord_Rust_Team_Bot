@@ -1,11 +1,10 @@
-/.vscode
-/Discord_Rust_Team_bot.egg-info
-/build
-/dist
-/test
-/Discord_Rust_Team_bot/cfg/token.ini
-**/__pycache__/
+**/build/
+**/dist/
 **/log/
+.vscode/*
+**/__pycache__/
+!token.ini
+!desktop.ini
 
 #  Git Ignore File
 # 
