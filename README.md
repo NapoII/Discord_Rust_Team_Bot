@@ -57,7 +57,7 @@ The 🔔-player-observation channel features a player tracking tool, allowing yo
    https://discord.com/developers/applications?new_application=true
 
 
-3. [ ] Enter the token and app id in the [token.ini](.\Discord_Rust_Team_Bot\Discord_Rust_Team_Bot\config\token.ini)
+3. [ ] Enter the token and app id in the [token.ini](Discord_Rust_Team_bot/config/token.ini)
 ```ini
 [discord]
 discord_bot_name = Napo_II_Dev
@@ -65,7 +65,7 @@ token = MTE4MDI1NzUwODQ2NDU0NTk0NA.GPlJnX.k1LOihmn0-mbAkBaGfOqTLrlMfYNMN9svAzCDg
 application_id = 1180257508464545944
 ```
 4. [ ] Add the Discord Bot to your Discord Server.
-5. [ ] Add the Discord ID (Guild_ID) to the [config.ini](.\Discord_Rust_Team_Bot\Discord_Rust_Team_Bot\config\config.ini)
+5. [ ] Add the Discord ID (Guild_ID) to the [config.ini](Discord_Rust_Team_bot/config/config.ini)
 ```ini
 [client]
 guild_name = 
