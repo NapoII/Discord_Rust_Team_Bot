@@ -29,6 +29,7 @@ The server stats channel showcases essential details for the rust server. It pre
 ### Rust Collection
 
 In the #rust-info channel, you can access various Rust-related commands for different functionalities. These commands cover topics such as CCTV codes, pager codes, prices, scrap yield calculations, quarry calculations, raid costs, extra binds, and electronic circuits. Use these commands to access the specific information or tools you need for your Rust gameplay.
+
 ![rust info](README_img/rust_info.gif)
 ![rust cctv](README_img/cctv.png)
 ![rust diesel](README_img/diesel_calc.png)
@@ -38,6 +39,7 @@ In the #rust-info channel, you can access various Rust-related commands for diff
 ### Player Observation
 
 The 🔔-player-observation channel features a player tracking tool, allowing you to monitor specific players on the server. Get insights into when players log in and log out. Additionally, utilize the notification tool to receive alerts when a tracked player comes online, if desired. Furthermore, you can view a list of all players on the server or even scan to identify potential team affiliations.
+
 ![rust all player](README_img/all_player.png)
 ![rust add player](README_img/add_pplayer.gif)
 ![rust player card](README_img/player_card.png)
