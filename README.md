@@ -22,6 +22,7 @@ To keep the Discord Rust area as clear as possible, only as many voice channels 
 
 The server stats channel showcases essential details for the rust server. It presents information such as the number of players, current map, last wipe date, map seed, and size within an embed. Keep your community updated with vital server information at a glance!
 ![Auto Voice Channel](README_img/battlemetrics_how_to.gif)
+
 ![Server Card](README_img/server_card.png)
 
 ### Rust Collection
@@ -30,6 +31,7 @@ In the #rust-info channel, you can access various Rust-related commands for diff
 ![rust info](README_img/rust_info.gif)
 ![rust cctv](README_img/cctv.png)
 ![rust diesel](README_img/diesel_calc.png)
+
 ![rust bind](README_img/must_have_bind.png)
 
 ### Player Observation
