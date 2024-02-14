@@ -97,7 +97,7 @@ Feel free to show your appreciation by treating me to a virtual coffee. Your sup
 
 [GNU GENERAL PUBLIC LICENSE Version 3](LICENSE)
 
-[Discord_Rust_Team_Bot](Discord_Rust_Team_Bot) was created on 08.February.2024 by [NapoII](https://github.com/NapoII)
+[Discord_Rust_Team_Bot](Discord_Rust_Team_bot/Discord_Rust_Team_bot.py) was created on 08.February.2024 by [NapoII](https://github.com/NapoII)
 
 
     
