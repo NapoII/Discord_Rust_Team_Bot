@@ -2,6 +2,12 @@
 [![github/repo-size](https://img.shields.io/github/repo-size/NapoII/Discord_Rust_Team_Bot)](https://github.com/NapoII/Discord_Rust_Team_Bot/archive/refs/heads/main.zip) [![github/license](https://img.shields.io/github/license/NapoII/Discord_Rust_Team_Bot)](https://github.com/NapoII/Discord_Rust_Team_Bot/blob/main/LICENSE) [![github/last-commit](https://img.shields.io/github/downloads/NapoII/Discord_Rust_Team_Bot/total)](https://img.shields.io/github/issues/NapoII/Discord_Rust_Team_Bot?style=plastic) [![github/issues_open](https://img.shields.io/github/issues/NapoII/Discord_Rust_Team_Bot?style=plastic)](https://img.shields.io/github/issues-raw/NapoII/Discord_Rust_Team_Bot) [![github/stars](https://img.shields.io/github/stars/NapoII/Discord_Rust_Team_Bot?style=social)](https://github.com/NapoII/Discord_Rust_Team_Bot/stargazers) [![discord](https://img.shields.io/discord/1152254593850417234)](https://discord.gg/knTKtKVfnr)
 
 The Discord Rust Team Bot is your ultimate companion for Rust teams! 🎉🎮 It's packed with all the essentials your Rust squad needs on Discord: from setting up voice channels to handy helper tools and keeping tabs on players and servers. So, kick back, relax, and let the bot handle the heavy lifting while you focus on dominating in-game! 😎🔥
+
+If you want to see the bot in action, come join my Discord and message me. You'll get permissions to test it out. Just reach out to me on Discord at Napo_II.
+
+[Join Discord](https://discord.com/invite/Gd23KJ76Tq)
+
+
 ## 📝 Table of Contents
 + [Demo / Working](#demo)
 + [Install](#usage)
