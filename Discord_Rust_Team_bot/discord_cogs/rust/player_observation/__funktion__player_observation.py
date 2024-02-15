@@ -12,6 +12,24 @@ from util.__funktion__ import *
 
 
 ###
+
+
+
+def player_exists(json_dir, player_name):
+    with open(json_dir, 'r') as f:
+        data = json.load(f)
+        for team, players in data.items():
+            if player_name in players:
+                return True
+    return False
+
+
+def if_team_in_json(json_dir, team_name):
+    with open(json_dir, 'r') as f:
+        data = json.load(f)
+        return team_name in data
+
+
 def delt_all_Player_subs(JSOn_data, Player_ID):
     """Args:
     - JSOn_data: a dictionary containing information about Rust teams and players.
@@ -189,6 +207,7 @@ Example Usage:
     >>> get_all_Player_from_a_Team(JSOn_data, "Team1")
     ['Player1', 'Player2']
 """
+
     Team_list = list(JSOn_data.keys())
     Team_list_len = len(Team_list)
     x = -1
@@ -196,12 +215,14 @@ Example Usage:
         x = x + 1
         if x == Team_list_len:
             break
-
-        Team_Player_list = list(JSOn_data[f"{Team}"].keys())
-        Team_Player_list.remove('note')
-        Team_Player_list.remove('embed_id')
-        Team_Player_list.remove('Sub_Discord_ID_list')
-        Team_Player_list.remove("Last_Status")
+        try:
+            Team_Player_list = list(JSOn_data[f"{Team}"].keys())
+            Team_Player_list.remove('note')
+            Team_Player_list.remove('embed_id')
+            Team_Player_list.remove('Sub_Discord_ID_list')
+            Team_Player_list.remove("Last_Status")
+        except:
+            pass
 
     return Team_Player_list
 

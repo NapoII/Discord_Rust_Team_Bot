@@ -136,10 +136,10 @@ class loops(commands.Cog, commands.Bot):
 
             
                 activity_text = f"👥 ( {players} / {maxPlayers} ) {player_channge_indi}"
-                print("# asyncio.sleep(20) #")
+                print("# asyncio.sleep(20) before activity#")
                 await asyncio.sleep(10)
                 await self.bot.change_presence(activity=discord.Game(activity_text))
-                print("# asyncio.sleep(20) #")
+                print("# asyncio.sleep(20) after activity#")
                 await asyncio.sleep(10)
                 server_stats_channel_id = read_config(config_dir, "channels", "server_stats_channel_id", "int")
                 server_stats_channel = self.bot.get_channel(server_stats_channel_id)
@@ -147,19 +147,17 @@ class loops(commands.Cog, commands.Bot):
 
                 activity_channel_Name_text = f"👥 {players} of {maxPlayers} {player_channge_indi}"
                 print(f"change: server_stats_channel name to = {activity_channel_Name_text}")
-                print("# asyncio.sleep(20) #")
+                print("# asyncio.sleep(20) before  server_stats_channel name#")
                 await asyncio.sleep(30)
                 await server_stats_channel.edit(name=activity_channel_Name_text)
-                print("# asyncio.sleep(20) #")
+                print("# asyncio.sleep(20) # asyncio.sleep(20) after server_stats_channel name#")
                 await asyncio.sleep(30)
 
                 try:
                     rust_server_embed_message_id = read_config(config_dir, "msgs", "rust_server_embed_message_id", "int")
                     rust_server_embed_message = await server_stats_channel.fetch_message(rust_server_embed_message_id)
-                    print("# asyncio.sleep(20) #")
-                    await asyncio.sleep(30)
                     await rust_server_embed_message.edit(embeds=server_embeds)
-                    print("# asyncio.sleep(20) #")
+                    print("# asyncio.sleep(20) after rust_server_embed_message #")
                     await asyncio.sleep(30)
                     print(f"Discord: Edit [rust_server_embed_message] msg[{rust_server_embed_message.id}] with new embed")
                 except:
@@ -264,10 +262,8 @@ class auto_smg_delt_serverstats(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message):
 
-        current_unix_time = int(time.time())
         delt_delay_sec = 60
-        delt_unix_time = discord_time_convert(current_unix_time + delt_delay_sec)
-        delt_msg_str = f"~~This mgs gets delt {delt_unix_time}~~"
+        delt_msg_str = delt_str_time(delt_delay_sec)
 
         player_observation = message.channel
         # Check if the message is from a bot to avoid potential loops

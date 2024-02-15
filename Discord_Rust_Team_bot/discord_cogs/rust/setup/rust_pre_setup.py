@@ -31,8 +31,8 @@ config_dir = os.path.join(bot_folder, "config", "config.ini")
 
 # json_path_server_channel_data_dir = os.path.join(current_dir, "server_channel_data.json")
 
-json_rust_help_commands_data_dir = os.path.join(bot_folder, "config","rust_help_commands.json")
-json_rust_observation_commands_data_dir = os.path.join(bot_folder, "config","observation_commands.json")
+json_rust_help_commands_data_dir = os.path.join(bot_folder, "config","json", "rust_help_commands.json")
+json_rust_observation_commands_data_dir = os.path.join(bot_folder, "config","json", "observation_commands.json")
 
 bot_cmd_channel = read_config(config_dir, "channels", "bot_cmd_channel_id")
 
@@ -165,7 +165,7 @@ class rust_system_setup(commands.Cog):
             print(f"The channel {player_observation.name} was created.")
             write_config(config_dir, "channels", "player_observation_channel_id", player_observation.id)
 
-            icon_url = img_url.rust_team_logo()
+            icon_url = img_url.rust.team_logo
             thumbnail_url = img_url.piktogramm.i
             embed = discord.Embed(title="#rust-player-observation", color=0x8080ff)
             embed.set_author(name=f"@{guild.name}",icon_url=icon_url)

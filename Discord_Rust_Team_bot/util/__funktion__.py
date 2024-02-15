@@ -417,32 +417,19 @@ def read_json_file(file_path):
 
 def fill_json_file(dir, dictionary):
     """
-Args:
-- dir (str): The directory of the file to be filled.
-- dictionary (dict): The dictionary to be filled in the file.
-
-Returns:
-- None
-
-Example Usage:
->>> fill_json_file("data.json", {"name": "John", "age": 30})
-File [data.json] is described and saved...
-"""
-    if not os.path.isfile(dir):  # Check if the file already exists
-        open(dir, "w").close()    # Create the file if it doesn't exist
+    Fill a JSON file with provided dictionary data.
     
-    with open(dir, "r+", encoding="utf-8") as file:  # Open the file for reading and writing
-        file_content = file.read()  # Read the current content of the file
-        file.seek(0)  # Reset the file pointer
-        if file_content:  # Check if the file is not empty
-            print(f"File [{dir}] is being edited and saved...\n")
-            existing_data = json.load(file)  # Load the existing content of the file
-            existing_data.update(dictionary)  # Update the content with the new dictionary
-            file.seek(0)  # Reset the file pointer
-            json.dump(existing_data, file, indent=4)  # Write the updated content back to the file
-        else:  # If the file is empty
-            print(f"File [{dir}] is being newly created and saved...\n")
-            json.dump(dictionary, file, indent=4)  # Write the dictionary into the file
+    Args:
+        dir (str): Directory path of the JSON file.
+        dictionary (dict): Dictionary data to be written into the JSON file.
+        
+    Returns:
+        None
+    """
+    # Open the JSON file in write mode
+    with open(dir, 'w') as file:
+        # Write dictionary data to the file with indentation for readability
+        json.dump(dictionary, file, indent=4)
 
 
 ################################################################################################################################
@@ -485,3 +472,13 @@ def new_loop_num(file_path):
 def decimal_separator(number):
     formatted_number = '{:,.0f}'.format(number)
     return formatted_number.replace(',', '.')
+
+def delt_str_time(sec_to_delta):
+    """
+    ~~This mgs gets delt in 60 sec~~"
+
+    """
+    current_unix_time = int(time.time())
+    delt_unix_time = discord_time_convert(current_unix_time + sec_to_delta)
+    delt_msg_str = f"~~This mgs gets delt {delt_unix_time}~~"
+    return delt_msg_str

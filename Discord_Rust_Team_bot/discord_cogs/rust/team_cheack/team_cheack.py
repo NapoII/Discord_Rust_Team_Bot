@@ -29,7 +29,7 @@ file_path_team_cheack = os.path.dirname(os.path.realpath(__file__))
 file_path_temp = os.path.join(file_path_team_cheack, "temp")
 file_path_temp = Folder_gen("temp", file_path_temp)
 
-player_observation_data = os.path.join(bot_folder, "config", "player_observation_data.json")
+player_observation_data = os.path.join(bot_folder, "config", "json","player_observation_data.json")
 file_name_with_time = File_name_with_time("team_cheack_data")
 team_cheack_data_temp_dir =  os.path.join(file_path_temp, f"{file_name_with_time}.temp")
 

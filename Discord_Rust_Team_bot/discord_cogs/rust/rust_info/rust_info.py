@@ -17,10 +17,10 @@ bot_folder = os.path.dirname(bot_path)
 # construct the path to the config.ini file relative to the current directory
 config_dir = os.path.join(bot_folder, "config", "config.ini")
 
-cctv_codes_json_dir = os.path.join(bot_folder, "config", "cctv_codes.json")
-price_list_json_dir = os.path.join(bot_folder, "config", "price_list.json")
-must_have_binds_json_dir = os.path.join(bot_folder, "config", "must_have_binds.json")
-json_rust_help_commands_data_dir = os.path.join(bot_folder, "config", "rust_help_commands.json")
+cctv_codes_json_dir = os.path.join(bot_folder, "config", "json", "cctv_codes.json")
+price_list_json_dir = os.path.join(bot_folder, "config", "json", "price_list.json")
+must_have_binds_json_dir = os.path.join(bot_folder, "config", "json", "must_have_binds.json")
+json_rust_help_commands_data_dir = os.path.join(bot_folder, "config", "json", "rust_help_commands.json")
 
 
 rust_help_commands_jason_data = read_json_file(json_rust_help_commands_data_dir)
@@ -51,9 +51,7 @@ class Rust_Info(commands.Cog, ):
         rust_info_channel = self.bot.get_channel(rust_info_channel_id)
         display_avatar = ctx.author.display_avatar
 
-        current_unix_time = int(time.time())
-        delt_unix_time = discord_time_convert(current_unix_time + sec_to_delta)
-        delt_msg_str = f"~~This mgs gets delt {delt_unix_time}~~"
+        delt_msg_str = delt_str_time(sec_to_delta)
 
         if first.lower() in ["help", "info", "i"]:
             icon_url = img_url.rust.team_logo
@@ -414,9 +412,7 @@ class auto_smg_delt_server_info(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message):
 
-        current_unix_time = int(time.time())
-        delt_unix_time = discord_time_convert(current_unix_time + sec_to_delta)
-        delt_msg_str = f"~~This mgs gets delt {delt_unix_time}~~"
+
         player_observation = message.channel
         # Check if the message is from a bot to avoid potential loops
         if message.author.bot:

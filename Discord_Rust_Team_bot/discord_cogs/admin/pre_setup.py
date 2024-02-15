@@ -33,7 +33,7 @@ token_config_dir = os.path.normpath(os.path.join(bot_folder, "config", "token.in
 # construct the path to the config.ini file relative to the current directory
 config_dir = os.path.join(bot_folder, "config", "config.ini")
 
-json_path_server_channel_data = os.path.join(current_dir, "server_channel_data.json")
+json_path_server_channel_data = os.path.join(current_dir, "json","server_channel_data.json")
 
 bot_cmd_channel = read_config(config_dir, "channels", "bot_cmd_channel_id")
 
@@ -204,7 +204,7 @@ class server_system_setup(commands.Cog):
             # Send informational messages to the channel
             embed_text = f"🔒 Please make sure to adjust the role settings for\n<#{category_admin_id}>\nto restrict channel visibility to authorized users,\ninstead of allowing it to be visible to everyone. 🔓"
             embed = discord.Embed(title="Attention!",description=embed_text, color=0x8080ff)
-            embed.set_thumbnail(url=my_image_url.piktogramm.attention())
+            embed.set_thumbnail(url=my_image_url.piktogramm.attention)
             await bot_cmd_channel.send(embed=embed)
 
             gif_url_expl = img_url.example.discord_role_rights

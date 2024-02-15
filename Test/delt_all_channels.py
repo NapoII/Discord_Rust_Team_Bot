@@ -19,11 +19,11 @@ import discord
 from discord.ext import commands
 import pyautogui
 
-# Define your Discord bot's token and application ID
-token = 
+# Define your Discord bot's token and application ID in
+token = "enter_token"
 application_id = 
 
-# Define the server ID where you want to perform operations
+# Define the server ID where you want to perform operations in int
 SERVER_ID = 
 
 # Set up Discord intents

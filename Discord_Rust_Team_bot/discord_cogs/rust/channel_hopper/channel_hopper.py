@@ -23,12 +23,12 @@ bot_path = os.path.abspath(sys.argv[0])
 bot_folder = os.path.dirname(bot_path)
 config_dir = os.path.join(bot_folder, "config", "config.ini")
 category_rust_id = read_config(config_dir, "categorys", "category_rust_id", "int")
-json_path = os.path.join(bot_folder, "config", "channel_data.json")
+json_path = os.path.join(bot_folder, "config", "json","channel_data.json")
 content = {}
 json_path = if_json_file_404(json_path, content)
 
 
-json_rust_help_commands_data_dir = os.path.join(bot_folder, "config","channel_hopper_commands.json")
+json_rust_help_commands_data_dir = os.path.join(bot_folder, "config","json", "channel_hopper_commands.json")
 
 guild_id = read_config(config_dir, "client", "guild_id", "int")
 if guild_id == None:
