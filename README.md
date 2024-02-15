@@ -18,7 +18,7 @@ If you want to see the bot in action, come join my Discord and message me. You'l
 
 ## Features
 - **Auto Voice Channels**: Automatically set up voice channels for your Rust squad.
-- **Player and Team Tracking**: Keep track of players and teams on your server.
+- **Player and Team Tracking**: Keep track of players and teams on the server.
 - **Server Tracking**: Monitor specific Rust servers for updates and information.
 - **Helpful Rust Tools**: Access useful tools tailored for Rust gameplay.
 - **Simple Channel Structure**: Maintain a clean and straightforward channel structure.
