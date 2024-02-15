@@ -9,6 +9,15 @@ The Discord Rust Team Bot is your ultimate companion for Rust teams! 🎉🎮 It
 + [Buy me a coffee](#coffee)
 + [LICENSE](#LICENSE)
 ## 🎥 Demo / Working <a name = "demo"></a>
+
+## Features
+- **Auto Voice Channels**: Automatically set up voice channels for your Rust squad.
+- **Player and Team Tracking**: Keep track of players and teams on your server.
+- **Server Tracking**: Monitor specific Rust servers for updates and information.
+- **Helpful Rust Tools**: Access useful tools tailored for Rust gameplay.
+- **Simple Channel Structure**: Maintain a clean and straightforward channel structure.
+- **Auto Activity Updates**: Automatically update player count from target servers.
+- **And Much More**: Explore additional features and functionalities!
 ### Create Channel Structure <a name = "Structure"></a>
 The bot automatically creates the required channels when it is first started so that you can get started straight away.
 
