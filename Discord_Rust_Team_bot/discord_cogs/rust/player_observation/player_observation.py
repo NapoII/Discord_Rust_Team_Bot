@@ -11,10 +11,10 @@ Player ID: 244928103
 ------------------------------------------------
 """
 
-import discord
+from discord.ui import Select, View
 import requests
 from discord.ext import commands, tasks
-from discord.ui import Select, View
+
 from numpy import append
 import asyncio
 from util.__my_imge_path__ import *
@@ -36,7 +36,7 @@ bot_path = os.path.abspath(sys.argv[0])
 bot_folder = os.path.dirname(bot_path)
 # construct the path to the config.ini file relative to the current directory
 config_dir = os.path.join(bot_folder, "config", "config.ini")
-
+loop_num_dir = os.path.join(bot_folder, "discord_cogs","rust", "player_observation", "loop.num")
 
 json_rust_observation_commands_data_dir = os.path.join(bot_folder, "config", "json", "observation_commands.json")
 json_rust_observation_commands_data = read_json_file(json_rust_observation_commands_data_dir)
@@ -100,7 +100,10 @@ class New_player(commands.Cog):
         thinking = self.bot.get_emoji(123456789)
         # Send the embed with the thinking animation
         embed = discord.Embed(title="Adding player...", description=f"{thinking} Thinking...", color=discord.Color.blurple())
-        defer_msg = await interaction.response.defer(ephemeral=True)
+        try:
+            defer_msg = await interaction.response.defer(ephemeral=True)
+        except:
+            pass
 
         battlemetrics_server_id = read_config(config_dir, "rust", "battlemetrics_server_id")
 
@@ -143,9 +146,11 @@ class New_player(commands.Cog):
                 player_lastSeen = discord_time_convert(time_convert)
                 played_on_server = True
             except:
+                await asyncio.sleep(2)
                 Player_server_data = Player_Server_info(player_id, battlemetrics_server_id)
                 if Player_server_data == "Rate Limit Exceeded":
                     while True:
+                        await asyncio.sleep(2)
                         Player_server_data = Player_Server_info(player_id, battlemetrics_server_id)
                         if Player_server_data != "Rate Limit Exceeded":
                             break
@@ -498,16 +503,15 @@ class Delt_Team(commands.Cog):
 
 class player_observation_loops(commands.Cog, commands.Bot):
     def __init__(self, bot: commands.Bot):
-
         self.bot = bot
+        self.requests_made = 0
+        self.requests_start_time = time.time()
         self.myLoop.start(bot)
 
-    Time_wait = 60
+    Time_wait = 60 * 5
 
-
-    @tasks.loop(seconds=Time_wait)  # repeat after every 10 seconds
-    async def myLoop(self, bot,):
-
+    @tasks.loop(seconds=Time_wait)  # repeat after every Time_wait seconds
+    async def myLoop(self, bot):
         await self.bot.wait_until_ready()
 
         battlemetrics_server_id = read_config(config_dir, "rust", "battlemetrics_server_id")
@@ -515,171 +519,161 @@ class player_observation_loops(commands.Cog, commands.Bot):
         Team_list = list(JSOn_data.keys())
         Team_list_len = len(Team_list)
 
-        print(f"Loop Start")
-        x = -1
-        while True:
+        loop_num = new_loop_num(loop_num_dir)
+        current_time = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
+        print(f"\n\nPlayer Observation Loop - {loop_num}# - {current_time}\n")
 
-            x = x + 1
-            if x == Team_list_len:
-                break
-            
-            JSOn_data = read_json_file(player_observation_data_dir)
-    	    
+        for x in range(Team_list_len):
             Team_Name = Team_list[x]
-            team_exist = if_team_in_json(player_observation_data_dir,Team_Name)
-            if team_exist:
-                try:
-                    Team_note = JSOn_data[f"{Team_list[x]}"]["note"]
-                    Team_embed_id = JSOn_data[f"{Team_list[x]}"]["embed_id"]
-                    Last_Status = JSOn_data[f"{Team_list[x]}"]["Last_Status"]
+            print(f"Processing Team: {Team_Name}")
 
-                    Never_played = False
+            team_exist = if_team_in_json(player_observation_data_dir, Team_Name)
+            if not team_exist:
+                print(f"Team {Team_Name} does not exist in JSON data.")
+                continue
 
-                    online = Team_online_status(JSOn_data, Team_Name, battlemetrics_server_id)
-                except:
-                    print (f"--> No {Team_list[x]} anymore.")
-                    pass
-
-                if online == "Rate Limit Exceeded":
-                    print_x = -1
-                    while True:
-                        print_x = print_x + 1
-                        online = Team_online_status(
-                            JSOn_data, Team_Name, battlemetrics_server_id)
-                        if online != "Rate Limit Exceeded":
-                            print(
-                                f"print_x:{print_x} Team_online_status = Rate Limit Exceeded")
-                            break
-
-                time_stemp = time.time()
-                Discord_time_stemp = discord_time_convert(int(time_stemp))
-                description = f"Team note: `{Team_note}` \n updated {Discord_time_stemp}"
-                Sub_alert = False
-
-                if online == True:
-                    embed = discord.Embed(title=Team_Name, description=description, color=0x808040)
-                    if Last_Status == False:
-                        Sub_alert = True
-
-                        JSOn_data = read_json_file(player_observation_data_dir)
-                        JSOn_data[f"{Team_list[x]}"]["Last_Status"] = True
-                        fill_json_file(player_observation_data_dir, JSOn_data)
-
-                else:
-
-                    embed = discord.Embed(title=Team_Name, description=description, color=0xff0000)
-                    if Last_Status == True:
-                        Sub_alert = True
-
-                    JSOn_data = read_json_file(player_observation_data_dir)
-                    try:
-                        JSOn_data[f"{Team_list[x]}"]["Last_Status"] = False
-                        fill_json_file(player_observation_data_dir, JSOn_data)
-                    except:
-                        print(f"--> no team: {Team_list[x]} no more in data")
-                        
-
-                # JSOn_data = read_json_file(player_observation_data_dir)
+            try:
+                Team_note = JSOn_data[f"{Team_Name}"]["note"]
+                Team_embed_id = JSOn_data[f"{Team_Name}"]["embed_id"]
+                Last_Status = JSOn_data[f"{Team_Name}"]["Last_Status"]
+                embed_color = 0xFF0000  # Default to red (offline)
+                at_least_one_online = False
 
                 Player_list = get_all_Player_from_a_Team(JSOn_data, Team_Name)
                 Player_list_len = len(Player_list)
-                y = -1
-                while True:
-                    y = y + 1
-                    if y == Player_list_len:
-                        break
-                    
-                    #JSOn_data = read_json_file(player_observation_data_dir)
+
+                # Initialize embed early to ensure it's always available
+                embed = discord.Embed(
+                    title=Team_Name,
+                    description=f"Team note: `{Team_note}` \n updated {discord_time_convert(int(time.time()))}",
+                    color=embed_color
+                )
+
+                Sub_alert = False
+
+                for y in range(Player_list_len):
                     Player = Player_list[y]
+                    print(f"Processing Player: {Player} in Team: {Team_Name}")
+
+                    # Check if the player exists in the data
                     do_player_exist = player_exists(player_observation_data_dir, Player)
-                    if do_player_exist:
-                        Player_id = JSOn_data[Team_Name][Player]["ID"]
-                        Player_note = JSOn_data[Team_Name][Player]["note"]
-                        Plyer_first_name = Player
-                        name_cange = Player_name_cange(JSOn_data, Team_Name, Player)
-                        Player_Bat_url = f"https://www.battlemetrics.com/players/{Player_id}"
-                        await asyncio.sleep(10)
-                        Player_server_data = Player_Server_info(Player_id, battlemetrics_server_id)
-                        if Player_server_data == "Rate Limit Exceeded":
-                            x = x - 1
-                            break
-                        if Player_server_data == "400":
-                            Never_played = True
-                            value = f"❌ `Never played on that Server` ❌ \n note: `{Player_note}` \n Player ID: [{Player_id}]({Player_Bat_url})"
-                            embed.add_field(name=Player, value=value, inline=True)
+                    if not do_player_exist:
+                        print(f"Player {Player} does not exist in JSON data.")
+                        continue
 
-                        else:
+                    Player_id = JSOn_data[Team_Name][Player]["ID"]
+                    Player_note = JSOn_data[Team_Name][Player]["note"]
 
-                            Online_ico = Player_server_data[0]
-                            lastSeen = Player_server_data[1]
-                            timePlayed = Player_server_data[2]
-                            Player_Server_url = Player_server_data[3]
-                            if "[Steam URL]" in Player_note:
-                                value = f" {Online_ico}  {lastSeen} \n ServerTime: `{timePlayed}h` \n note: {Player_note} \n Player ID: [{Player_id}]({Player_Bat_url})"
-                            else:
-                                value = f" {Online_ico}  {lastSeen} \n ServerTime: `{timePlayed}h` \n note: `{Player_note}` \n Player ID: [{Player_id}]({Player_Bat_url})"
+                    # Check player status with rate limit management
+                    player_status = await self.check_rate_limit(Player_Server_info, Player_id, battlemetrics_server_id)
+                    print(f"Status for Player {Player}: {player_status}")
 
-                            if str(name_cange[0]) == str(True):
-                                embed.add_field(name=f"Oldname: {Player}\n🆕: {name_cange[1]}", value=value, inline=True)
-                            else:
-                                embed.add_field(name=f"{Player}", value=value, inline=True)
+                    if player_status == "Rate Limit Exceeded":
+                        player_status = await self.handle_rate_limit(JSOn_data, Team_Name, battlemetrics_server_id, Player_id)
+
+                    if player_status == "400":
+                        # Player has never played on the server
+                        value = f"❌ `Never played on that Server` ❌ \n note: `{Player_note}` \n Player ID: [{Player_id}](https://www.battlemetrics.com/players/{Player_id})"
+                        embed.add_field(name=Player, value=value, inline=True)
                     else:
-                        print (f"--> {Player} not anymore in data")
+                        Online_ico = player_status[0]
+                        lastSeen = player_status[1]
+                        timePlayed = player_status[2]
+                        Player_Server_url = player_status[3]
 
-                if Sub_alert == True:
-                    JSOn_data = read_json_file(player_observation_data_dir)
-                    Sub_Discord_ID_list = list(JSOn_data[f"{Team_list[x]}"]["Sub_Discord_ID_list"])
-                    Sub_Discord_ID_list_len = len(Sub_Discord_ID_list)
-                    if Sub_Discord_ID_list_len == 0:
-                        pass
-                    else:
-                        z = -1
-                        while True:
-                            z = z + 1
-                            if z == Sub_Discord_ID_list_len:
-                                break
-                            Player_ID = Sub_Discord_ID_list[z]
-                            User = await self.bot.fetch_user(int(Player_ID))
-                            embed_list = []
-                            if online == True:
-                                embed_New_Status = discord.Embed(
-                                    title="🟢 New Online Status 🟢", description=f"Team `{Team_Name}` is now online! <#{player_observation_channel_id}>", color=0xff8000)
-                                embed_list.append(embed_New_Status)
-                                embed_list.append(embed)
-                                await User.send(embeds=embed_list)
-                            else:
-                                embed_New_Status = discord.Embed(
-                                    title="🔴 New Online Status 🔴", description=f"Team `{Team_Name}` is now offline! <#{player_observation_channel_id}>", color=0xff0000)
-                                embed_list.append(embed_New_Status)
-                                embed_list.append(embed)
-                                await User.send(embeds=embed_list)
+                        if Online_ico == "🟢":
+                            at_least_one_online = True
 
+                        value = f"{Online_ico}  {lastSeen} \n ServerTime: `{timePlayed}h` \n note: `{Player_note}` \n Player ID: [{Player_id}]({Player_Server_url})"
+                        embed.add_field(name=Player, value=value, inline=True)
+
+                # Set the embed color based on whether at least one player is online
+                if at_least_one_online:
+                    embed.color = 0x00FF00  # Green if at least one player is online
+                else:
+                    embed.color = 0xFF0000  # Red if all players are offline
+
+                # Fetch the channel
+                player_observation_channel = self.bot.get_channel(player_observation_channel_id)
+
+                # Try to fetch the existing message; if it doesn't exist, post a new one
                 try:
-                    player_observation_channel = self.bot.get_channel(
-                        player_observation_channel_id)
                     msg = await player_observation_channel.fetch_message(Team_embed_id)
-                    await msg.edit(embed=embed)
-                    print(
-                        f"Discord: Edit Embed from Team [{Team_Name}] msg.id: [{msg.id}]")
-                except:
+                    await msg.edit(embed=embed, view=Sub_button())
+                    print(f"Updated Embed for Team: {Team_Name}")
+                except discord.NotFound:
+                    print(f"Embed message for Team {Team_Name} not found. Creating a new one.")
+                    msg = await player_observation_channel.send(embed=embed, view=Sub_button())
+                    print(f"Posted new Embed for Team: {Team_Name}")
 
-                    try:
-                        is_team_in_data = if_team_in_json(player_observation_data_dir, Team_Name)
-                        if is_team_in_data:
-                         
-                            JSOn_data = read_json_file(player_observation_data_dir)
-                            player_observation_channel = self.bot.get_channel(player_observation_channel_id)
-                            Team_Card_embed = await player_observation_channel.send(embed=embed, view=Sub_button())
-                            Team_Card_embed_id = (Team_Card_embed.id)
-                            JSOn_data[Team_Name]["embed_id"] = Team_Card_embed_id
-                            fill_json_file(player_observation_data_dir, JSOn_data)
-                            print(f"Discord: send new Embed from Team [{Team_Name}] msg.id: [{Team_Card_embed_id}]")
-                        else:
-                            print(f"--> {Team_Name} no more in data")
-                    except:
-                        pass
+                    # Update JSON with the new embed ID
+                    JSOn_data[f"{Team_Name}"]["embed_id"] = msg.id
+                    fill_json_file(player_observation_data_dir, JSOn_data)
+                    print(f"Updated JSON file with new embed ID for Team {Team_Name}")
+
+            except Exception as e:
+                print(f"--> Error processing {Team_Name}: {e}")
+                continue
+
+    async def check_rate_limit(self, func, *args, **kwargs):
+        current_time = time.time()
+
+        # Reset the counter every minute
+        if current_time - self.requests_start_time > 60:
+            print("Resetting request count for the new minute.")
+            self.requests_made = 0
+            self.requests_start_time = current_time
+
+        if self.requests_made >= 60:
+            # Wait if the minute limit is reached
+            sleep_time = 60 - (current_time - self.requests_start_time)
+            print(f"Rate limit per minute reached. Sleeping for {sleep_time} seconds.")
+            await asyncio.sleep(sleep_time)
+            self.requests_made = 0
+            self.requests_start_time = time.time()
+
+        if self.requests_made % 15 == 0 and self.requests_made > 0:
+            # Ensure we don't exceed 15 requests per second
+            print("Reached 15 requests in a second. Pausing for 1 second.")
+            await asyncio.sleep(1)
+
+        print(f"Making request {self.requests_made + 1}...")
+        result = func(*args, **kwargs)
+        self.requests_made += 1
+        return result
+
+    async def handle_rate_limit(self, JSOn_data, Team_Name, battlemetrics_server_id, Player_id):
+        # Exponential backoff when rate limit is exceeded
+        retry_in = 2
+        print("Rate limit exceeded. Starting exponential backoff.")
+        while True:
+            print(f"Retrying after {retry_in} seconds...")
+            await asyncio.sleep(retry_in)
+            retry_in = min(retry_in * 2, 60)  # Max backoff of 1 minute
+
+            player_status = Player_Server_info(Player_id, battlemetrics_server_id)
+            if player_status != "Rate Limit Exceeded":
+                print("Rate limit resolved. Continuing...")
+                return player_status
+
+    async def notify_subscribers(self, JSOn_data, Team_Name, embed, channel_id):
+        Sub_Discord_ID_list = JSOn_data[Team_Name]["Sub_Discord_ID_list"]
+        Sub_Discord_ID_list_len = len(Sub_Discord_ID_list)
+        if Sub_Discord_ID_list_len == 0:
+            return
+
+        for z in range(Sub_Discord_ID_list_len):
+            Player_ID = Sub_Discord_ID_list[z]
+            User = await self.bot.fetch_user(int(Player_ID))
+            embed_list = []
+            if JSOn_data[Team_Name]["Last_Status"]:
+                embed_New_Status = discord.Embed(title="🟢 New Online Status 🟢", description=f"Team `{Team_Name}` is now online! <#{channel_id}>", color=0xff8000)
             else:
-                print(f"--> {Team_Name} no more in data")
+                embed_New_Status = discord.Embed(title="🔴 New Online Status 🔴", description=f"Team `{Team_Name}` is now offline! <#{channel_id}>", color=0xff0000)
+            embed_list.append(embed_New_Status)
+            embed_list.append(embed)
+            await User.send(embeds=embed_list)
+
 
 class Sub_button(discord.ui.View,):
     def __init__(self) -> None:
@@ -759,58 +753,90 @@ class Sub_button(discord.ui.View,):
         await interaction.response.send_message(embed=embed, ephemeral=True)
 
 
+from discord.ui import Button, View
+from discord import Interaction, Embed
+from discord.ext import commands
+import time
 
 class all_players(commands.Cog):
     def __init__(self, bot: commands.Bot) -> None:
         self.bot = bot
+        self.current_page = 0
+        self.pages = []
+        self.total_pages = 0
+        self.data_len = 0
+        self.message = None
 
     @app_commands.command(name="all_players", description="Show a list of all players who are online")
     async def all_players_list_send(self, interaction: discord.Interaction):
         battlemetrics_server_id = read_config(config_dir, "rust", "battlemetrics_server_id")
         data = get_all_online_player(battlemetrics_server_id)
-        data_len = len(data)
+        self.data_len = len(data)
 
-        player_observation_channel = await self.bot.fetch_channel(player_observation_channel_id)
+        players_per_page = 30
+        self.pages = [(name, int(player_id.pop())) for name, player_id in data.items()]
+        self.total_pages = (self.data_len + players_per_page - 1) // players_per_page  # Calculate the number of pages
+
+        self.current_page = 0
+        embed = self.generate_embed(self.current_page)
+        view = self.create_view()
+
+        self.message = await interaction.response.send_message(embed=embed, view=view)
+        await self.start_timer()
+
+    def create_view(self):
+        view = View()
+        view.add_item(Button(label="◀️", style=discord.ButtonStyle.primary, custom_id="previous_page", disabled=self.current_page == 0))
+        view.add_item(Button(label="▶️", style=discord.ButtonStyle.primary, custom_id="next_page", disabled=self.current_page >= self.total_pages - 1))
+        return view
+
+    async def start_timer(self):
+        timeout_seconds = 240  # 4 minutes
+        for _ in range(timeout_seconds):
+            await asyncio.sleep(1)
+            if self.message is None:
+                return
+        await self.message.delete()
+
+    @commands.Cog.listener()
+    async def on_interaction(self, interaction: discord.Interaction):
+        if interaction.type == discord.InteractionType.component:
+            if interaction.data['custom_id'] == "next_page":
+                self.current_page += 1
+                embed = self.generate_embed(self.current_page)
+                view = self.create_view()
+                await interaction.response.edit_message(embed=embed, view=view)
+            elif interaction.data['custom_id'] == "previous_page":
+                self.current_page -= 1
+                embed = self.generate_embed(self.current_page)
+                view = self.create_view()
+                await interaction.response.edit_message(embed=embed, view=view)
+
+    def generate_embed(self, page_number):
+        players_per_page = 30
+        start = page_number * players_per_page
+        end = min(start + players_per_page, len(self.pages))
         str_list = []
-        for name, player_id in data.items():
-            player_id = int(player_id.pop())
+
+        for name, player_id in self.pages[start:end]:
             player_bat_url = f"https://www.battlemetrics.com/players/{player_id}"
-            id_str = f"[{player_id}]({player_bat_url})"
-            str_list.append(f"{name} | `{player_id}`")
+            str_list.append(f"{name} | [`{player_id}`]({player_bat_url})")
 
-        str = "\n".join(str_list)
+        description = "\n".join(str_list)
 
-        sec_to_delta = 60
-        delt_msg_str = delt_str_time(sec_to_delta)
+        # Calculate expiration time
+        current_time = int(time.time())
+        expiration_time = current_time + 240  # 4 minutes in seconds
+        expiration_str = f"<t:{expiration_time}:R>"
 
-        all_player_embeds = []
-        embed_delt = discord.Embed(title=f"{delt_msg_str}", colour=0xffffff)
-        
-        all_player_embeds.append(embed_delt)
-        # await interaction.response.send_message(f"<#{player_observation_channel_id}> The list will be automatically deleted in 60 sec.", ephemeral=True)
-        
-        # Überprüfen, ob die Länge des Strings größer als 1000 ist
-        players = str.split('\n')
-        chunks = []
-        current_chunk = players[0]
-        
-        for player in players[1:]:
-            if len(current_chunk) + len(player) < 1000:
-                current_chunk += '\n' + player
-            else:
-                chunks.append(current_chunk)
-                current_chunk = player
-        
-        if current_chunk:
-            chunks.append(current_chunk)
-        
-        for i, chunk in enumerate(chunks):
-            chunk_embed = discord.Embed(title=f"{data_len} Player Online (Teil {i+1})", description=chunk)
-            all_player_embeds.append(chunk_embed)
-            #await player_observation_channel.send(embed=chunk_embed, delete_after=60)
-        await interaction.response.send_message(embeds=all_player_embeds, delete_after=sec_to_delta)
+        embed = Embed(
+            title=f"{self.data_len} Players Online - Page {page_number + 1} of {self.total_pages}",
+            description=f"Expires: {expiration_str}\n\n{description}",
+            color=0x00ff00
+        )
+        return embed
 
-class auto_smg_delt_player_observation(commands.Cog):
+class auto_msg_delt_player_observation(commands.Cog):
     def __init__(self, bot):
         self.bot = bot
         self.config_dir = config_dir
@@ -893,5 +919,7 @@ async def setup(bot: commands.Bot):
     await bot.add_cog(Delt_player(bot), guild=discord.Object(guild_id))
     await bot.add_cog(Delt_Team(bot), guild=discord.Object(guild_id))
     await bot.add_cog(all_players(bot), guild=discord.Object(guild_id))
-    await bot.add_cog(auto_smg_delt_player_observation(bot), guild=discord.Object(guild_id))
+    await bot.add_cog(auto_msg_delt_player_observation(bot), guild=discord.Object(guild_id))
     bot.add_view(Sub_button())
+
+

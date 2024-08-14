@@ -3,7 +3,6 @@
 add doku
 ------------------------------------------------
 """
-
 #### import
 
 import os
@@ -57,7 +56,6 @@ git_last_commit, git_last_date, git_branch = get_last_commit_info()
 git_link = read_config(config_dir, "git", "git_link", "str")
 
 
-
 ################################################################################################################################
 # main
 
@@ -74,9 +72,7 @@ class MyBot(commands.Bot):
         # add more cogs here
 
         self.initial_extensions = [
-            "discord_cogs.admin.pre_setup",
             "discord_cogs.rust.setup.rust_pre_setup",
-            "discord_cogs.admin.say",
             "discord_cogs.rust.channel_hopper.channel_hopper",
             "discord_cogs.rust.server_stats.server_stats",
             "discord_cogs.rust.team_cheack.team_cheack",
@@ -84,6 +80,7 @@ class MyBot(commands.Bot):
             "discord_cogs.rust.rust_info.rust_info",
         
         ]
+
 
     async def setup_hook(self):
         """Load initial extensions during bot setup."""
@@ -118,16 +115,6 @@ class MyBot(commands.Bot):
         bot_start_embeds = []    
 
 
-        git_embed = discord.Embed(title="Git Status", color=0xff80ff,)
-        git_embed.set_author(name="created by NapoII", url="https://github.com/NapoII")
-        git_embed.set_thumbnail(url=img_url.platfrom.discord_bot)
-        git_embed.add_field(name="github", value=git_link, inline=False)
-        git_embed.add_field(name="Git Branch", value=git_branch, inline=True)
-        git_embed.add_field(name="Git Commit", value=git_last_commit, inline=True)
-        git_embed.add_field(name="Git Date", value=git_last_date, inline=True)
-        bot_start_embeds.append(git_embed)
-
-
         time_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         print("\n")
         print(f"{time_str} --> {git_link}")
@@ -135,19 +122,6 @@ class MyBot(commands.Bot):
         print(f"Git Git Commit --> {git_last_commit}")
         print(f"Git Dateit --> {git_last_date}")
 
-
-        # Create and send the bot status embed
-        start_time = discord_time_convert(time.time())
-        start_embed = discord.Embed(title="📶 Bot is Online and Ready to Run... 📶", color=0xff8080)
-        start_embed.add_field(name="Client Name", value=self.user.name, inline=True)
-        start_embed.add_field(name="Online since", value=f"{start_time}", inline=True)
-        bot_start_embeds.append(start_embed)
-
-        try:
-            await bot_cmd_channel.send(embeds=bot_start_embeds)
-        except:
-            print ("First START OF THE BOT !!!")
-            pass
 
         time_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         print(f"{time_str} --> 📶 Bot is Online and Ready to Run... 📶")
@@ -164,7 +138,6 @@ bot.run(Discord_token)
 #
 #   Discord PY Doku : https://discordpy.readthedocs.io/en/stable/
 #   Embed generator : https://embed.dan.onl/
-
 
 
 """

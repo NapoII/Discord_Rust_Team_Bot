@@ -323,15 +323,6 @@ class rust_system_setup(commands.Cog):
                 text = text + f"<#{id}>\n"
 
 
-            bot_cmd_channel_id = read_config(config_dir,"channels", "bot_cmd_channel_id", "int")
-            bot_cmd_channel = discord.utils.get(guild.text_channels, id=bot_cmd_channel_id)
-            dc_time = discord_time_convert(time.time())
-            embed = discord.Embed(title=f"The following Rust Team Channels have been created:",
-                                description=f"> The following channels had to be created:\n{text}\ncreated: {dc_time}",
-                                colour=0xffff80)
-            await bot_cmd_channel.send(embed=embed)
-
-
 
 async def setup(bot: commands.Bot):
     await bot.add_cog(rust_system_setup(bot), guild=discord.Object(guild_id))

@@ -13,6 +13,9 @@ This script is intended for cleaning purposes and should be used with caution.
 Ensure that you have the necessary permissions before running this script on a server.
 """
 
+discord_bot_name = 
+token = ""
+application_id = 
 
 # Import necessary libraries
 import discord
@@ -20,11 +23,11 @@ from discord.ext import commands
 import pyautogui
 
 # Define your Discord bot's token and application ID in
-token = "enter_token"
-application_id = 
+token = token
+application_id = application_id
 
 # Define the server ID where you want to perform operations in int
-SERVER_ID = 
+SERVER_ID = 1179423438700564480
 
 # Set up Discord intents
 intents = discord.Intents.default()
@@ -32,6 +35,8 @@ intents.all()
 
 # Create a bot instance with specified command prefix and intents
 bot = commands.Bot(command_prefix='!', intents=intents)
+
+
 
 # Event handler for when the bot is ready
 @bot.event

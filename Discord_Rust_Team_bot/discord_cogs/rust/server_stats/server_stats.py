@@ -37,7 +37,7 @@ class loops(commands.Cog, commands.Bot):
         self.bot = bot
         self.myLoop.start(bot)
 
-    @tasks.loop(seconds=200)  # repeat after every 10 seconds
+    @tasks.loop(seconds=60*3)  # repeat after every 10 seconds
         
     async def myLoop(self, bot):
         loop_num = new_loop_num(loop_num_dir)
@@ -134,24 +134,22 @@ class loops(commands.Cog, commands.Bot):
                 Server_Description.set_image(url=server_headerimage)
                 server_embeds.append(Server_Description)
 
-            
                 activity_text = f"👥 ( {players} / {maxPlayers} ) {player_channge_indi}"
-                print("# asyncio.sleep(20) before activity#")
-                await asyncio.sleep(10)
-                await self.bot.change_presence(activity=discord.Game(activity_text))
-                print("# asyncio.sleep(20) after activity#")
-                await asyncio.sleep(10)
+
+                activity = discord.CustomActivity(name=activity_text)
+                await self.bot.change_presence(activity=activity)
+
                 server_stats_channel_id = read_config(config_dir, "channels", "server_stats_channel_id", "int")
                 server_stats_channel = self.bot.get_channel(server_stats_channel_id)
 
 
                 activity_channel_Name_text = f"👥 {players} of {maxPlayers} {player_channge_indi}"
-                print(f"change: server_stats_channel name to = {activity_channel_Name_text}")
-                print("# asyncio.sleep(20) before  server_stats_channel name#")
-                await asyncio.sleep(30)
-                await server_stats_channel.edit(name=activity_channel_Name_text)
-                print("# asyncio.sleep(20) # asyncio.sleep(20) after server_stats_channel name#")
-                await asyncio.sleep(30)
+                # print(f"change: server_stats_channel name to = {activity_channel_Name_text}")
+                # print("# asyncio.sleep(20) before  server_stats_channel name#")
+                # await asyncio.sleep(30)
+                # await server_stats_channel.edit(name=activity_channel_Name_text)
+                # print("# asyncio.sleep(20) # asyncio.sleep(20) after server_stats_channel name#")
+                # await asyncio.sleep(30)
 
                 try:
                     rust_server_embed_message_id = read_config(config_dir, "msgs", "rust_server_embed_message_id", "int")
@@ -221,7 +219,16 @@ class change_server_id(commands.Cog):
 
             print(f'Confirmed... self.confirm_Button = {self.confirm_Button}')
             # return self.confirm_Button, self.say_channel_id, self.say_title, self.say_text
+
             write_config(config_dir, "rust", "battlemetrics_server_id", str(server_id))
+
+            server_stats_channel = self.bot.get_channel(server_stats_channel_id)
+
+            Server_name
+            discord_channel_name = re.sub(r'\W+', '-', Server_name)
+            discord_channel_name = f"💻-Server-{discord_channel_name}"
+            await server_stats_channel.edit(name=discord_channel_name)
+
 
         else:
             self.confirm_Button = False
@@ -314,4 +321,5 @@ async def setup(bot: commands.Bot):
     await bot.add_cog(change_server_id(bot), guild=discord.Object(guild_id))
     await bot.add_cog(auto_smg_delt_serverstats(bot), guild=discord.Object(guild_id))
 
-    
+# counts = discord.CustomActivity(name=f"Vote end timer changed")
+# await self.bot.change_presence(activity=counts)

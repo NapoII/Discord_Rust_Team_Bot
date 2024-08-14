@@ -155,25 +155,6 @@ Example Usage:
 
 
 def Team_choice(Team_data_fiel_dir):
-    """
-    Retrieves a list of team names and their associated notes from a JSON file.
-
-    Args:
-        Team_data_fiel_dir (str): The file directory for the JSON file containing the team data.
-
-    Returns:
-        - Team_list (list): A list of team names as strings.
-        - Team_Note_list (list): A list of notes associated with each team name as strings.
-
-    Example Usage:
-        >>> team_data_dir = "\Work_Folder\Rust\Team_data.json"
-        >>> teams, notes = Team_choice(team_data_dir)
-        >>> print(teams)
-        ['Red Team', 'Blue Team', 'Green Team']
-        >>> print(notes)
-        ['This team is focused on offense.', 'This team is focused on defense.', 'This team is focused on resource gathering.']
-    """
-    #Team_data_fiel_dir = f"E:\Pr0grame\My_ Pyhton\work_in_progress\Discord_Bot_Napo_III_2.1\Work_Folder\Rust\Team_data.json"
 
     team_file = Read_File_Out(Team_data_fiel_dir)
     res = json.loads(team_file)
