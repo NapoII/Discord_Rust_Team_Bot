@@ -14,13 +14,17 @@ from discord.ext import commands, tasks
 
 from util.__funktion__ import *
 from util.__Mydiscord_funktions__ import *
+
 from util.__my_imge_path__ import *
 img_url = my_image_url()
+
+from util.__my_path_funktion__ import *
+my_file_path = my_file_path()
+
 #### pre Var
 py_name = os.path.basename(__file__)
 
-file_path = os.path.normpath(os.path.dirname(sys.argv[0]))
-config_dir = file_path + os.path.sep + "config"+ os.path.sep +"config.ini"
+
 
 ################################################################################################################################
 """
@@ -34,26 +38,18 @@ Loads configuration settings from token.ini and config.ini files.
 
 """
 
-# Load Config_dir
-token_config_dir = os.path.normpath(os.path.join(file_path, "config", "token.ini"))
 
 
 # Client
-Discord_token = read_config(token_config_dir, "discord", "token")
-Application_ID = read_config(token_config_dir, "discord", "application_id")
+Discord_token = my_file_path.config.Discord_token
+Application_ID = my_file_path.config.Application_ID
 
 
-guild_id = read_config(config_dir, "client", "guild_id", "int")
+guild_id = my_file_path.config.guild_id
 guild = discord.Object(id=guild_id)
-praefix = read_config(config_dir, "client", "praefix")
-activity_text = read_config(config_dir, "client", "activity")
+praefix = my_file_path.config.praefix
+activity_text = my_file_path.config.activity_text
 activity = Discord_Activity(activity_text)
-
-# channel
-bot_cmd_channel_id = read_config(config_dir, "channels", "bot_cmd_channel_id", "int")
-
-git_last_commit, git_last_date, git_branch = get_last_commit_info()
-git_link = read_config(config_dir, "git", "git_link", "str")
 
 
 ################################################################################################################################
@@ -78,6 +74,7 @@ class MyBot(commands.Bot):
             "discord_cogs.rust.team_cheack.team_cheack",
             "discord_cogs.rust.player_observation.player_observation",
             "discord_cogs.rust.rust_info.rust_info",
+            "discord_cogs.rust.squad_manage.squad_manage"
         
         ]
 
@@ -97,31 +94,6 @@ class MyBot(commands.Bot):
             return
 
         print(f'\nLogged in as {self.user} (ID: {self.user.id})')
-
-        # Retrieve bot_cmd_channel_id without type conversion
-        bot_cmd_channel_id = read_config(config_dir, "channels", "bot_cmd_channel_id", "int")
-
-        # Check if bot_cmd_channel_id is valid
-        if bot_cmd_channel_id is not None:
-            bot_cmd_channel = guild.get_channel(bot_cmd_channel_id)
-
-            # Check if bot_cmd_channel is a valid TextChannel
-            if bot_cmd_channel is not None and isinstance(bot_cmd_channel, discord.TextChannel):
-                print(f'\nBot is connected to [{guild.name}] id: [{guild.id}]')
-
-            """Send an introductory message to the specified channel."""
-
-        # Create and send the bot information embed
-        bot_start_embeds = []    
-
-
-        time_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-        print("\n")
-        print(f"{time_str} --> {git_link}")
-        print(f"Git Branch --> {git_branch}")
-        print(f"Git Git Commit --> {git_last_commit}")
-        print(f"Git Dateit --> {git_last_date}")
-
 
         time_str = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
         print(f"{time_str} --> 📶 Bot is Online and Ready to Run... 📶")

@@ -700,5 +700,3 @@ async def setup(bot: commands.Bot):
     await bot.add_cog(bot_vc_stay(bot), guild=discord.Object(guild_id))
     await bot.add_cog(bot_vc_help(bot), guild=discord.Object(guild_id))
     #await bot.add_cog(bot_vc_kick(bot), guild=discord.Object(guild_id))
-
-

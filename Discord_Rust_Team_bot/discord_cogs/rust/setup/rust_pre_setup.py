@@ -34,8 +34,6 @@ config_dir = os.path.join(bot_folder, "config", "config.ini")
 json_rust_help_commands_data_dir = os.path.join(bot_folder, "config","json", "rust_help_commands.json")
 json_rust_observation_commands_data_dir = os.path.join(bot_folder, "config","json", "observation_commands.json")
 
-bot_cmd_channel = read_config(config_dir, "channels", "bot_cmd_channel_id")
-
 
 guild_id = read_config(config_dir, "client", "guild_id", "int")
 if guild_id == None:

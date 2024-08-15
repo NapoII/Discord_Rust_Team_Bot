@@ -175,7 +175,7 @@ class change_server_id(commands.Cog):
             self,
             interaction: discord.Integration,
             server_id: int):
-        #bot_cmd_channel_id = self.bot.get_channel(bot_cmd_channel_id)
+
 
         url = f"https://api.battlemetrics.com/servers/{server_id}"
         response = requests.get(url)

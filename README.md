@@ -41,6 +41,11 @@ The server stats channel showcases essential details for the rust server. It pre
 
 ![Server Card](README_img/server_card.png)
 
+### SQUAD MODE
+
+The Squad feature allows you to easily manage larger groups with different voice channels by creating squads. Each user can join their squad via buttons, and leaders have the ability to automatically move squad members to their respective channels with just one click.
+![Squad Lead](README_img/squad_lead.gif)
+
 ### Rust Collection
 
 In the #rust-info channel, you can access various Rust-related commands for different functionalities. These commands cover topics such as CCTV codes, pager codes, prices, scrap yield calculations, quarry calculations, raid costs, extra binds, and electronic circuits. Use these commands to access the specific information or tools you need for your Rust gameplay.

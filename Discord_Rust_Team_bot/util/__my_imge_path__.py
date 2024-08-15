@@ -191,6 +191,17 @@ class my_image_url:
         https://i.imgur.com/qUTBvgk.gif
         """
 
+        join = "https://i.imgur.com/tdO6lDV.gif"
+        """
+        URL for the piktogramm image with 'koin'.
+        https://i.imgur.com/tdO6lDV.gif
+        """
+
+        controle = "https://i.imgur.com/YaPjYt0.gif"
+        """
+        URL for the controle GIF.
+        https://i.imgur.com/YaPjYt0.gif
+        """
 
     class platfrom:
         """

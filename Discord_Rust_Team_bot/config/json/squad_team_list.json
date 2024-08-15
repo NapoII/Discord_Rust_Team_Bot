@@ -1,0 +1,20 @@
+{
+    "1": {
+        "squad_name": "\ud83e\uddf1 Base Builder",
+        "role_id": 1,
+        "voice_channel_id": 1,
+        "description": "All about the base"
+    },
+    "2": {
+        "squad_name": "\u26cf\ufe0f Farmer",
+        "role_id": 1,
+        "voice_channel_id": 1,
+        "description": "we need NODES!!!"
+    },
+    "3": {
+        "squad_name": "\ud83c\udfdb\ufe0f Monuments",
+        "role_id": 1,
+        "voice_channel_id": 1,
+        "description": "We need Scrap"
+    }
+}

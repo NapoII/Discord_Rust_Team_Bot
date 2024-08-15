@@ -13,7 +13,7 @@ This script is intended for cleaning purposes and should be used with caution.
 Ensure that you have the necessary permissions before running this script on a server.
 """
 
-discord_bot_name = 
+discord_bot_name = ""
 token = ""
 application_id = 
 
