@@ -6,6 +6,9 @@ exampel : cctv codes
 """
 
 from discord import app_commands
+from discord.ext import commands
+from discord.ui import Select, View
+from .raid_calc import raid_calculator
 
 from util.__funktion__ import *
 from util.__my_imge_path__ import *
@@ -97,12 +100,7 @@ class Rust_Info(commands.Cog, ):
             await rust_info_channel.send(embeds = embeds_list, delete_after=(sec_to_delta))
 
         if first.lower() == "raid":
-            embed = discord.Embed(title="Raid Calculator",
-                    url="https://napoii.github.io/Rust-Collection/Rust_Collection/Raid_Calc/raid_calc.html",
-                    description=f"[Use the table and the calculator](https://napoii.github.io/Rust-Collection/Rust_Collection/Raid_Calc/raid_calc.html)\n\n{delt_msg_str}")
-            embed.set_author(name=f"@{ctx.author}",icon_url=f"{display_avatar}")
-            embed.set_image(url=img_url.rust.raid_card)
-            await rust_info_channel.send(embed=embed, delete_after=(sec_to_delta))
+            await raid_calculator(ctx)
 
         if first.lower() in ["cctv", "code"]:
 
