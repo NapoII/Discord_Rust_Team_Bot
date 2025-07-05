@@ -4,3 +4,4 @@ discord
 bs4
 numpy
 asyncio
+requests
