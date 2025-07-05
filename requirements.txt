@@ -1,7 +1,6 @@
 logNow
 configparser
 discord
-json
 bs4
 numpy
 asyncio
